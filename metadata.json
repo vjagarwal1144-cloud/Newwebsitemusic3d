@@ -1,0 +1,6 @@
+{
+  "name": "Chai Wala — Steam. Stillness. Chai.",
+  "description": "An atmospheric digital tea stall for focus, calmness, and mindful listening. Featuring lo-fi Indian music, authentic chai pouring sounds, ambient tapri soundscapes, and stillness timers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
