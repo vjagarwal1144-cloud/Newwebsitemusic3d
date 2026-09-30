@@ -180,7 +180,7 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* Download Source Code Zip */}
         <a
-          href="/chaiwala-source-code.zip"
+          href={`${import.meta.env.BASE_URL}chaiwala-source-code.zip`}
           download="chaiwala-live-source.zip"
           aria-label="Download website source code (.zip)"
           title="Download Complete Source Code (.zip)"
