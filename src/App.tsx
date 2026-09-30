@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ExperienceShell, SceneMode } from './components/ExperienceShell';
+import { ExperienceShell } from './components/ExperienceShell';
 import { SteamCanvas } from './components/SteamCanvas';
 import { TopBar } from './components/TopBar';
 import { HeroTitle } from './components/HeroTitle';
@@ -10,47 +10,45 @@ import { SoundMixerModal } from './components/SoundMixerModal';
 import { ChaiTimerModal } from './components/ChaiTimerModal';
 import { ChaiMenuModal } from './components/ChaiMenuModal';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
-import { audioEngine, AmbientMixerState } from './utils/audioEngine';
+import { audioEngine, ChaiAmbientMixer } from './utils/audioEngine';
 
 export function App() {
-  const [currentScene, setCurrentScene] = useState<SceneMode>('dusk');
   const [isPouring, setIsPouring] = useState(false);
-  const [steamBurstTrigger, setSteamBurstTrigger] = useState(0);
+  const [burstTrigger, setBurstTrigger] = useState(0);
 
-  // Modals & Drawers
+  // Modals & Panels
   const [isMixerOpen, setIsMixerOpen] = useState(false);
   const [isTimerOpen, setIsTimerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
   const [isPlaylistSwitcherOpen, setIsPlaylistSwitcherOpen] = useState(false);
 
-  // Sound mixer state
-  const [mixerState, setMixerState] = useState<AmbientMixerState>(() => audioEngine.getMixerState());
+  // Ambient sound mixer state
+  const [mixerState, setMixerState] = useState<ChaiAmbientMixer>(() => audioEngine.getMixerState());
   const [isAmbientActive, setIsAmbientActive] = useState(false);
 
-  // YouTube Music Player hook with original chaiwala.live default playlist
+  // YouTube Music Player hook with guaranteed first-time loading & ad-free stream
   const yt = useYouTubePlayer('PLSW-rtFaY_80');
 
-  // Handle signature Chai Pour action
+  // Trigger Traditional Cutting Chai Pour
   const handlePour = useCallback(() => {
     if (isPouring) return;
     setIsPouring(true);
-    setSteamBurstTrigger((prev) => prev + 1);
+    setBurstTrigger((prev) => prev + 1);
 
-    // If ambient soundscape is not running yet, start it gently
+    // Auto-start ambient soundscape on first pour if not already active
     if (!isAmbientActive) {
       audioEngine.startAmbientSoundscape();
       setIsAmbientActive(true);
     }
 
-    // Play authentic tea stream audio
     audioEngine.playChaiPour(() => {
       setIsPouring(false);
     });
   }, [isPouring, isAmbientActive]);
 
-  // Ambient mixer update
-  const handleChangeMixer = (updated: Partial<AmbientMixerState>) => {
+  // Ambient Mixer Updates
+  const handleChangeMixer = (updated: Partial<ChaiAmbientMixer>) => {
     audioEngine.setMixerLevels(updated);
     setMixerState(audioEngine.getMixerState());
   };
@@ -65,10 +63,9 @@ export function App() {
     }
   };
 
-  // Keyboard accessibility
+  // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         return;
       }
@@ -76,7 +73,7 @@ export function App() {
       if (e.code === 'Space') {
         e.preventDefault();
         yt.togglePlay();
-      } else if (e.code === 'KeyP') {
+      } else if (e.code === 'KeyP' || e.code === 'KeyC') {
         e.preventDefault();
         handlePour();
       } else if (e.code === 'KeyM') {
@@ -96,31 +93,28 @@ export function App() {
   }, [yt, handlePour]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden select-none bg-[#0b0705]">
+    <div className="relative w-full h-[100dvh] overflow-hidden select-none bg-[#0b0705]">
       {/* Hidden YouTube IFrame Container */}
       <div
         id={yt.containerId}
         className="fixed top-0 -left-[9999px] w-[2px] h-[2px] pointer-events-none opacity-0"
       />
 
-      {/* Atmospheric Visual Backdrop Shell */}
-      <ExperienceShell
-        currentScene={currentScene}
-        onSceneChange={setCurrentScene}
-      >
-        {/* Top Navigation Bar with Clock, Status, Steam Pill & Controls */}
+      {/* Atmospheric Visual Backdrop Shell with Authentic Chai Tapri Photo */}
+      <ExperienceShell>
+        {/* Top Navigation Bar with World Clock, "चाय की भाप" Button & Controls */}
         <TopBar
           isPouring={isPouring}
           onPour={handlePour}
-          currentScene={currentScene}
-          onSelectScene={setCurrentScene}
+          isAdFreeMode={yt.isAdFreeMode}
+          onToggleAdFreeMode={yt.toggleAdFreeMode}
           onOpenMixer={() => setIsMixerOpen(true)}
           onOpenTimer={() => setIsTimerOpen(true)}
           onOpenMenu={() => setIsMenuOpen(true)}
         />
 
-        {/* Center Hero Brand Title */}
-        <div className="flex-1 flex items-center justify-center -mt-6 sm:-mt-10 pointer-events-none">
+        {/* Center Hero Title */}
+        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none px-4">
           <HeroTitle />
         </div>
 
@@ -144,14 +138,15 @@ export function App() {
           onToggleQueue={() => setIsQueueOpen(!isQueueOpen)}
           onOpenPlaylistSwitcher={() => setIsPlaylistSwitcherOpen(true)}
           playlistId={yt.playlistId}
+          isAdFreeMode={yt.isAdFreeMode}
         />
       </ExperienceShell>
 
-      {/* Realistic Interactive Steam Simulation Canvas */}
+      {/* Interactive Hot Chai Steam Particle Canvas */}
       <SteamCanvas
-        burstTrigger={steamBurstTrigger}
+        burstTrigger={burstTrigger}
         originX={0.5}
-        originY={0.62}
+        originY={0.65}
       />
 
       {/* Playlist Track Queue Drawer */}
@@ -164,11 +159,7 @@ export function App() {
           yt.playIndex(idx);
           setIsQueueOpen(false);
         }}
-        playlistTitle={
-          yt.playlistId === 'PLSW-rtFaY_80'
-            ? 'Old Delhi Monsoon Lo-fi'
-            : 'Station Tracklist'
-        }
+        playlistTitle="Old Delhi Tapri Queue"
       />
 
       {/* Playlist & Station Switcher Modal */}
@@ -177,6 +168,8 @@ export function App() {
         onClose={() => setIsPlaylistSwitcherOpen(false)}
         activePlaylistId={yt.playlistId}
         onSelectPlaylist={(id) => yt.switchPlaylist(id)}
+        isAdFreeMode={yt.isAdFreeMode}
+        onToggleAdFreeMode={yt.toggleAdFreeMode}
       />
 
       {/* Ambient Soundscape Mixer Modal */}
@@ -189,13 +182,13 @@ export function App() {
         onToggleAmbient={handleToggleAmbient}
       />
 
-      {/* Chai Stillness & Mindfulness Timer Modal */}
+      {/* Focus & Mindfulness Stillness Timer Modal */}
       <ChaiTimerModal
         isOpen={isTimerOpen}
         onClose={() => setIsTimerOpen(false)}
       />
 
-      {/* The Tapri Menu & Secret Recipes Modal */}
+      {/* World Comfort Drinks & Chai Brewing Recipes Modal */}
       <ChaiMenuModal
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}

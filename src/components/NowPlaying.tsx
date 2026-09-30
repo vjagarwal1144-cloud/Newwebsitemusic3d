@@ -10,6 +10,7 @@ import {
   ListMusic,
   Radio,
   ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { CurrentTrack } from '../hooks/useYouTubePlayer';
 
@@ -32,6 +33,7 @@ interface NowPlayingProps {
   onToggleQueue: () => void;
   onOpenPlaylistSwitcher: () => void;
   playlistId: string;
+  isAdFreeMode: boolean;
 }
 
 const formatTime = (secs: number) => {
@@ -60,50 +62,59 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
   onToggleQueue,
   onOpenPlaylistSwitcher,
   playlistId,
+  isAdFreeMode,
 }) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   return (
-    <div className="relative z-20 flex flex-col items-center w-full px-3 sm:px-6 pb-4 sm:pb-6 pointer-events-auto">
+    <div className="relative z-30 flex flex-col items-center w-full px-2.5 sm:px-6 pb-2.5 sm:pb-5 pointer-events-auto shrink-0">
       {/* Container Wrapper */}
-      <div className="w-full max-w-2xl flex flex-col gap-2">
+      <div className="w-full max-w-2xl flex flex-col gap-1.5 sm:gap-2">
         {/* Main Frosted Glass Player Capsule */}
-        <div className="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-2xl glass-panel-deep shadow-[0_12px_40px_rgba(0,0,0,0.65)] border border-[#ffecd6]/15 backdrop-blur-2xl">
-          {/* Vinyl / Chai Disc Album Art */}
+        <div className="flex items-center gap-2.5 sm:gap-4 p-2 sm:p-3 rounded-2xl glass-panel-deep shadow-[0_12px_40px_rgba(0,0,0,0.7)] border border-[#ffecd6]/15 backdrop-blur-2xl bg-[#1b0d06]/85">
+          {/* Vinyl Disc Album Art */}
           <div className="relative shrink-0">
             <div
-              className={`w-11 h-11 sm:w-13 sm:h-13 rounded-full overflow-hidden flex items-center justify-center shadow-lg transition-transform duration-500 border border-[#f2b877]/30 ${
+              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex items-center justify-center shadow-lg transition-transform duration-500 border border-[#f2b877]/30 ${
                 isPlaying ? 'spin-slow' : ''
               }`}
               style={{
-                background: 'linear-gradient(135deg, #e8934a 0%, #8a3d1e 50%, #2b130e 100%)',
+                background: 'linear-gradient(135deg, #e8934a 0%, #a8581e 50%, #1a0b04 100%)',
               }}
             >
-              {/* Vinyl grooves pattern */}
+              {/* Vinyl grooves */}
               <div className="absolute inset-1 rounded-full border border-black/40" />
               <div className="absolute inset-2.5 rounded-full border border-black/30" />
-              <div className="w-3.5 h-3.5 rounded-full bg-[#f5e9dc] flex items-center justify-center shadow-inner">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#0b0705]" />
+              <div className="w-3 h-3 rounded-full bg-white flex items-center justify-center shadow-inner">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#1b0d06]" />
               </div>
             </div>
 
             {/* Glowing amber halo when playing */}
             {isPlaying && (
-              <div className="absolute -inset-1 rounded-full bg-[#e8934a]/20 blur-sm pointer-events-none -z-10" />
+              <div className="absolute -inset-1 rounded-full bg-[#e8934a]/30 blur-sm pointer-events-none -z-10" />
             )}
           </div>
 
           {/* Track Details & Scrubber */}
-          <div className="flex-1 min-w-0 flex flex-col justify-center gap-1.5">
+          <div className="flex-1 min-w-0 flex flex-col justify-center gap-1 sm:gap-1.5">
             {/* Title & Artist */}
-            <div className="flex items-center justify-between gap-2 overflow-hidden">
+            <div className="flex items-center justify-between gap-1.5 overflow-hidden">
               <div className="min-w-0 flex flex-col">
-                <span className="text-xs sm:text-sm font-semibold text-[#f5e9dc] truncate">
-                  {currentTrack.title || 'Chai Wala Radio'}
-                </span>
-                <span className="text-[10px] sm:text-[11px] text-[#f5e9dc]/60 truncate">
-                  {currentTrack.author || 'Lo-fi Tea Lounge'}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs sm:text-sm font-semibold text-white truncate max-w-[170px] sm:max-w-xs">
+                    {currentTrack.title || 'Old Delhi Monsoon Lo-fi'}
+                  </span>
+                  {isAdFreeMode && (
+                    <span className="px-1.5 py-0.2 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold shrink-0 flex items-center gap-0.5">
+                      <ShieldCheck className="w-2.5 h-2.5" />
+                      Zero-Ad
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-[#f5e9dc]/60 truncate">
+                  {currentTrack.author || 'Chai Tapri Soundscapes'}
                 </span>
               </div>
 
@@ -111,8 +122,8 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               <button
                 type="button"
                 onClick={onOpenPlaylistSwitcher}
-                title="Switch Station or Load Custom Playlist"
-                className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.15] text-[10px] font-medium text-[#f2b877] border border-[#ffecd6]/10 shrink-0 transition-colors"
+                title="Switch Station or Load Custom YouTube Playlist"
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-[10px] font-medium text-[#f2b877] border border-white/10 shrink-0 transition-colors"
               >
                 <Radio className="w-3 h-3" />
                 <span>Station</span>
@@ -121,7 +132,7 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
 
             {/* Scrubber Seek Bar */}
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono tabular-nums text-[#f5e9dc]/50 shrink-0 w-8 text-right">
+              <span className="text-[10px] font-mono tabular-nums text-[#f5e9dc]/50 shrink-0 w-7 sm:w-8 text-right">
                 {formatTime(currentTime)}
               </span>
 
@@ -140,7 +151,7 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
                 />
               </div>
 
-              <span className="text-[10px] font-mono tabular-nums text-[#f5e9dc]/50 shrink-0 w-8">
+              <span className="text-[10px] font-mono tabular-nums text-[#f5e9dc]/50 shrink-0 w-7 sm:w-8">
                 {formatTime(duration)}
               </span>
             </div>
@@ -154,7 +165,7 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               onClick={onToggleShuffle}
               aria-label="Toggle shuffle"
               title={isShuffled ? 'Shuffle enabled' : 'Shuffle disabled'}
-              className={`hidden sm:flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+              className={`hidden sm:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-colors ${
                 isShuffled
                   ? 'text-[#f2b877] bg-[#e8934a]/20'
                   : 'text-[#f5e9dc]/60 hover:text-white hover:bg-white/5'
@@ -169,23 +180,23 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               onClick={onPrevious}
               aria-label="Previous track"
               title="Previous"
-              className="flex items-center justify-center w-8 h-8 rounded-full text-[#f5e9dc]/80 hover:text-white hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full text-[#f5e9dc]/80 hover:text-white hover:bg-white/10 transition-colors"
             >
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
 
-            {/* Play / Pause - Distinctive White Pill Button with elevation */}
+            {/* Play / Pause - Distinctive Button */}
             <button
               type="button"
               onClick={onTogglePlay}
               aria-label={isPlaying ? 'Pause' : 'Play'}
               title={isPlaying ? 'Pause' : 'Play'}
-              className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#f5e9dc] hover:bg-white text-[#0b0705] shadow-[0_4px_16px_rgba(0,0,0,0.4)] hover:scale-105 active:scale-95 transition-all"
+              className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-[#ffecd6] text-black shadow-[0_4px_16px_rgba(0,0,0,0.4)] hover:scale-105 active:scale-95 transition-all"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-current" />
+                <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-[#1b0d06]" />
               ) : (
-                <Play className="w-5 h-5 fill-current ml-0.5" />
+                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5 text-[#1b0d06]" />
               )}
             </button>
 
@@ -195,7 +206,7 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               onClick={onNext}
               aria-label="Next track"
               title="Next"
-              className="flex items-center justify-center w-8 h-8 rounded-full text-[#f5e9dc]/80 hover:text-white hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full text-[#f5e9dc]/80 hover:text-white hover:bg-white/10 transition-colors"
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
@@ -206,10 +217,8 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               onClick={onToggleQueue}
               aria-label="Toggle playlist queue"
               title="View Tracklist"
-              className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                isQueueOpen
-                  ? 'text-[#f2b877] bg-[#e8934a]/25'
-                  : 'text-[#f5e9dc]/80 hover:text-white hover:bg-white/10'
+              className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-colors ${
+                isQueueOpen ? 'text-[#f2b877] bg-[#e8934a]/20' : 'text-[#f5e9dc]/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <ListMusic className="w-4 h-4" />
@@ -232,7 +241,7 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
               </button>
 
               {showVolumeSlider && (
-                <div className="absolute bottom-11 right-0 p-3 rounded-2xl glass-panel-deep shadow-2xl z-50 flex items-center gap-2 w-36 border border-[#ffecd6]/20">
+                <div className="absolute bottom-11 right-0 p-3 rounded-2xl glass-panel-deep shadow-2xl z-50 flex items-center gap-2 w-36 border border-white/20 bg-[#251006]">
                   <button
                     type="button"
                     onClick={onToggleMute}
@@ -256,15 +265,15 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
           </div>
         </div>
 
-        {/* Bottom Sub-bar: Playlist Switcher on mobile + Floating YouTube Music pill */}
+        {/* Bottom Sub-bar */}
         <div className="flex items-center justify-between px-2 text-xs text-[#f5e9dc]/60">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onOpenPlaylistSwitcher}
-              className="sm:hidden flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.15] text-[#f2b877] border border-[#ffecd6]/15 transition-colors"
+              className="sm:hidden flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-[#f2b877] border border-white/15 transition-colors text-[11px]"
             >
-              <Radio className="w-3.5 h-3.5" />
+              <Radio className="w-3 h-3" />
               <span>Change Station</span>
             </button>
           </div>
@@ -275,12 +284,12 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             title="Open playlist in YouTube Music"
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.18] text-[#f5e9dc]/80 hover:text-[#f2b877] border border-[#ffecd6]/15 transition-all group"
+            className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/[0.08] hover:bg-white/[0.18] text-[#f5e9dc]/80 border border-white/15 transition-all group text-[10px]"
           >
-            <span className="w-3.5 h-3.5 rounded-full bg-red-600/80 flex items-center justify-center text-white text-[8px] font-bold">
+            <span className="w-3 h-3 rounded-full bg-red-600 flex items-center justify-center text-white text-[7px] font-bold">
               ▶
             </span>
-            <span className="text-[11px] font-medium">YT Music</span>
+            <span className="font-medium">YT Music</span>
             <ExternalLink className="w-2.5 h-2.5 opacity-60 group-hover:opacity-100" />
           </a>
         </div>

@@ -1,141 +1,174 @@
 import React, { useState } from 'react';
-import { X, Coffee, Clock, Sparkles, Flame } from 'lucide-react';
+import { X, Coffee, Clock, Sparkles, Flame, Globe } from 'lucide-react';
 
 interface Recipe {
   id: string;
   name: string;
-  hindiName: string;
+  nativeName: string;
+  culture: string;
   region: string;
   brewTime: string;
-  strength: 'Mellow' | 'Medium' | 'Kadak (Strong)' | 'Very Strong';
+  strength: 'Mellow' | 'Medium' | 'Kadak (Strong)' | 'Intense';
   tagline: string;
   ingredients: string[];
   steps: string[];
-  tapriLore: string;
+  lore: string;
+  icon: string;
 }
 
 const RECIPES: Recipe[] = [
   {
     id: 'adrak-elaichi',
     name: 'Adrak Elaichi Kadak Chai',
-    hindiName: 'अदरक इलायची कड़क चाय',
+    nativeName: 'अदरक इलायची कड़क चाय',
+    culture: 'Indian Tapri Culture',
     region: 'North India & Tapris Nationwide',
     brewTime: '8-10 mins',
     strength: 'Kadak (Strong)',
-    tagline: 'The undisputed soul of Indian winter and monsoon mornings.',
+    tagline: 'The undisputed soul of monsoon mornings and winter evenings.',
+    icon: '🫖',
     ingredients: [
-      '1 cup water',
-      '1 cup whole milk',
-      '2 tbsp Assam CTC black tea',
-      '1 inch freshly crushed ginger (adrak)',
+      '1 cup filtered water',
+      '1 cup whole buffalo or full-cream milk',
+      '2.5 tbsp Assam CTC granular black tea',
+      '1 inch freshly crushed ginger root (adrak)',
       '3 green cardamom pods (crushed open)',
-      '2 tsp sugar or crushed jaggery (gud)',
+      '2 tsp raw cane sugar or crushed jaggery (gud)',
     ],
     steps: [
-      'In a saucepan, bring 1 cup of water to a rolling boil with the crushed ginger and cardamom.',
-      'Boil for 2-3 minutes until the water takes on a rich golden spiced aroma.',
-      'Add the CTC black tea leaves. Simmer on medium heat for 2 minutes to extract the deep brisk color.',
-      'Pour in whole milk and sugar. Bring the tea to a foaming boil 3 times (the tapri "ubal" ritual).',
-      'Strain hot into cutting glasses or clay kulhads from a height of 1 foot to create natural froth.',
+      'Bring water to a rolling boil with crushed ginger and crushed cardamom pods in a heavy saucepan.',
+      'Boil for 2-3 minutes until golden spice oils infuse into the water.',
+      'Add granular CTC black tea and simmer on medium heat for 2 minutes to develop deep brisk color.',
+      'Pour in full-cream milk and sugar. Bring the tea to a foaming boil 3 times (the tapri "ubal" ritual).',
+      'Strain hot into cutting glasses or clay kulhads from a height of 1 foot to aerate natural froth.',
     ],
-    tapriLore: 'Roadside chaiwalas crush whole spices right in front of you using a heavy brass pestle—the sound echoes like music.',
+    lore: 'Roadside chaiwalas crush spices with a heavy brass mortar and pestle right in front of you—the metallic clinking is the heartbeat of Indian mornings.',
   },
   {
-    id: 'bombay-cutting',
-    name: 'Bombay Cutting Chai',
-    hindiName: 'बॉम्बे कटिंग चाय',
-    region: 'Mumbai, Maharashtra',
-    brewTime: '7 mins',
-    strength: 'Very Strong',
-    tagline: 'Half a glass of pure lightning to keep Mumbai moving.',
-    ingredients: [
-      '3/4 cup water',
-      '3/4 cup full-cream milk',
-      '2.5 tbsp dark granular CTC tea',
-      '1/2 inch crushed ginger',
-      '2 crushed green cardamoms',
-      '1 clove (laung)',
-      '2 tsp sugar',
-    ],
-    steps: [
-      'Boil water with ginger and clove until deeply aromatic.',
-      'Add double the usual quantity of tea leaves—cutting chai demands uncompromising strength.',
-      'Add milk and boil down until reduced by 20% into a rich, caramel-hued decoction.',
-      'Strain half a glass into classic ribbed cutting glasses nestled in wire caddies.',
-    ],
-    tapriLore: 'Named "cutting" because one full cup is split into two half servings, perfect for sharing a quick conversation with friends before catching the local train.',
-  },
-  {
-    id: 'irani-chai',
-    name: 'Hyderabadi Irani Chai',
-    hindiName: 'हैदराबादी ईरानी चाय',
-    region: 'Hyderabad & Old Mumbai Cafes',
-    brewTime: '30 mins (Slow Simmer)',
-    strength: 'Kadak (Strong)',
-    tagline: 'Velvety, slow-condensed milk poured over dark tea liquor.',
-    ingredients: [
-      '2 cups full-fat buffalo milk (condensed with mawa/condensed milk)',
-      '1.5 cups water',
-      '3 tbsp premium Assam dust & leaf tea',
-      '4 crushed cardamom pods',
-      '2 tbsp sugar',
-      'Fresh Bun Maska (warm buttered pav) to accompany',
-    ],
-    steps: [
-      'In pot 1: Slow boil milk until it reduces to half, becoming silky, creamy, and golden.',
-      'In pot 2 (sealed with dough): Simmer tea and water on low ember heat for 25 minutes into a potent, dark "decoction".',
-      'To serve: Pour 1/3 cup of steaming dark tea decoction into a cup, then top with 2/3 cup of rich reduced sweet milk.',
-      'Serve alongside warm Bun Maska dipped straight into the chai foam.',
-    ],
-    tapriLore: 'Introduced by Persian Zoroastrian immigrants in the 19th century, Irani cafes with bentwood chairs and marble tables became legendary institutions of poetry and debate.',
-  },
-  {
-    id: 'kashmiri-kahwa',
-    name: 'Kashmiri Kahwa & Saffron',
-    hindiName: 'कश्मीरी कहवा',
-    region: 'Kashmir Valley',
-    brewTime: '6 mins',
-    strength: 'Mellow',
-    tagline: 'Golden elixir of saffron threads, green tea, and slivered almonds.',
-    ingredients: [
-      '2 cups water',
-      '1 tbsp Kashmiri green tea leaves',
-      '8-10 saffron strands (kesar)',
-      '2 green cardamoms (lightly bruised)',
-      '1 small cinnamon stick',
-      '1 tbsp slivered blanched almonds',
-      '1 tbsp wild honey',
-    ],
-    steps: [
-      'Boil water with cinnamon and cardamom for 3 minutes.',
-      'Turn off flame, add green tea leaves and saffron strands. Cover and steep for 2-3 minutes.',
-      'Place slivered almonds in ceramic cups, drizzle honey, and strain the fragrant golden liquor over.',
-    ],
-    tapriLore: 'Traditionally brewed in a copper samovar heated by glowing coals, Kahwa is a gesture of royal Himalayan hospitality.',
-  },
-  {
-    id: 'sulaimani-chai',
-    name: 'Sulaimani Spiced Tea',
-    hindiName: 'सुलेमानी चाय',
-    region: 'Malabar Coast, Kerala',
-    brewTime: '5 mins',
+    id: 'tokyo-matcha',
+    name: 'Ceremonial Matcha Latte',
+    nativeName: '宇治抹茶ラテ',
+    culture: 'Japanese Kissaten & Tea Ceremony',
+    region: 'Uji, Kyoto & Tokyo Kissatens',
+    brewTime: '4 mins',
     strength: 'Medium',
-    tagline: 'Amber black tea with sweet mint, cardamom, and a splash of lemon.',
+    tagline: 'Vibrant emerald green, umami depth, and silky microfoam.',
+    icon: '🍵',
     ingredients: [
-      '2 cups water',
-      '1.5 tsp black tea leaves',
-      '2 green cardamoms (crushed)',
-      '1 small cinnamon bark',
-      '4 fresh mint leaves',
-      '1 tbsp jaggery or sugar',
-      'Juice of 1/2 fresh lime',
+      '2g (1.5 chashaku scoops) Ceremonial Grade Uji Matcha',
+      '60ml hot water at 75°C (167°F)',
+      '180ml lightly steamed oat milk or whole milk',
+      '1 tsp wild blossom honey or wasanbon sugar (optional)',
     ],
     steps: [
-      'Boil water with cardamom, cinnamon, and jaggery for 3 minutes.',
-      'Add black tea leaves, boil for 1 minute only to prevent bitterness.',
-      'Turn off flame, drop in fresh bruised mint leaves, squeeze fresh lime juice, and strain into clear glasses.',
+      'Sift matcha powder through a fine stainless steel mesh strainer into a warmed chawan bowl.',
+      'Add 60ml of hot water (never boiling, to protect the delicate sweet L-theanine amino acids).',
+      'Whisk briskly using a bamboo chasen in a rapid "W" motion from the wrist until a dense jade-green microfoam forms.',
+      'Gently pour warm steamed milk down the edge of the glass, creating elegant layered ombre swirls.',
     ],
-    tapriLore: 'An Arabic-influenced digestive brew celebrated after heavy Malabar feasts. Legend says King Solomon himself savored a version of this tea.',
+    lore: 'Zen monks originally consumed matcha before dawn to cultivate calm alert presence (zazen)—the perfect accompaniment to rain against window panes.',
+  },
+  {
+    id: 'paris-cortado',
+    name: 'Montmartre Velvet Cortado',
+    nativeName: 'Café Cortado Français',
+    culture: 'Parisian Café & Flânerie',
+    region: 'Montmartre & Left Bank, Paris',
+    brewTime: '3 mins',
+    strength: 'Intense',
+    tagline: 'Equal parts dark bittersweet espresso and silky textured milk.',
+    icon: '☕',
+    ingredients: [
+      'Double shot (60ml) dark roasted espresso (Arabica & Robusta blend)',
+      '60ml whole milk steamed to silky microfoam (flat white texture)',
+      'A pinch of raw demerara sugar',
+      'Warm buttered croissant on the side',
+    ],
+    steps: [
+      'Pull a rich double espresso with a thick golden-hazelnut crema into a heavy 130ml glass tumbler.',
+      'Steam fresh cold milk to 60°C (140°F), focusing on microfoam without giant bubbles.',
+      'Pour steamed milk at a 1:1 ratio directly into the espresso center, cutting through the crema.',
+      'Serve immediately on a small zinc saucer with a tiny silver spoon and buttered croissant.',
+    ],
+    lore: 'The word cortado comes from "cortar" (to cut)—the warm milk cuts the espresso acidity while preserving the full potency of the roast.',
+  },
+  {
+    id: 'nordic-cocoa',
+    name: 'Viennese Spiced Hot Cocoa',
+    nativeName: 'Krydret Varm Sjokolade',
+    culture: 'Scandinavian Hygge & Nordic Cabins',
+    region: 'Oslo, Bergen & Viennese Salons',
+    brewTime: '8 mins',
+    strength: 'Mellow',
+    tagline: 'Melted dark chocolate, cinnamon stick, sea salt & vanilla cream.',
+    icon: '🪵',
+    ingredients: [
+      '70g 72% dark chocolate (chopped into fine shavings)',
+      '1.5 cups whole milk',
+      '1/4 cup heavy cream',
+      '1 cinnamon bark stick',
+      '1 star anise pod',
+      'Pinch of sea salt flakes',
+      'Dollop of fresh whipped chantilly cream',
+    ],
+    steps: [
+      'Heat milk, cream, cinnamon stick, and star anise in a saucepan over low heat until gentle steaming.',
+      'Remove whole spices and whisk in the chopped dark chocolate until fully melted and glossy.',
+      'Add a pinch of sea salt to unlock the deep cacao depth.',
+      'Pour into heavy stoneware pottery mugs and crown with cold whipped cream and chocolate dust.',
+    ],
+    lore: 'In Scandinavian winters where daylight lasts just 4 hours, hot cocoa enjoyed by stone fireplaces embodies "koselig"—the feeling of warm contentment.',
+  },
+  {
+    id: 'moroccan-mint',
+    name: 'Maghrebi Fresh Mint Tea',
+    nativeName: 'أتاي بالنعناع',
+    culture: 'North African Hospitality',
+    region: 'Marrakech, Morocco',
+    brewTime: '6 mins',
+    strength: 'Medium',
+    tagline: 'Gunpowder green tea poured from high heights with fresh spearmint.',
+    icon: '🌿',
+    ingredients: [
+      '2 tbsp Chinese gunpowder green tea pearls',
+      'Large generous bunch of fresh organic spearmint (Naanâ)',
+      '2.5 cups boiling water',
+      '3-4 sugar cubes or cane sugar',
+    ],
+    steps: [
+      'Rinse gunpowder tea pearls with a splash of boiling water to awaken the leaves, then discard water.',
+      'Add 2 cups boiling water and steep on low heat for 2 minutes.',
+      'Stuff fresh spearmint leaves into the metal teapot and add sugar.',
+      'Pour tea from at least 18 inches above the ornate patterned glasses to create the signature froth ("the crown" or rezza).',
+      'Pour back into the pot and repeat twice to ensure even temperature and flavor.',
+    ],
+    lore: 'In Moroccan tradition, the first glass is as gentle as life, the second is as strong as love, and the third is as soothing as death.',
+  },
+  {
+    id: 'turkish-coffee',
+    name: 'Istanbul Sand-Brewed Kahve',
+    nativeName: 'Türk Kahvesi',
+    culture: 'Ottoman Coffee House Tradition',
+    region: 'Grand Bazaar, Istanbul',
+    brewTime: '5 mins',
+    strength: 'Intense',
+    tagline: 'Extra-finely powdered beans slow-boiled in a copper cezve.',
+    icon: '☕',
+    ingredients: [
+      '1 rounded tbsp flour-fine ground dark coffee',
+      '1 fincan (espresso cup) cold filtered water',
+      '1 tsp sugar (Orta Şekerli - medium sweet)',
+      '2 green cardamom seeds (optional)',
+      'Pistachio Turkish delight to serve',
+    ],
+    steps: [
+      'Combine cold water, coffee, and sugar into a solid brass or copper cezve pot. Stir once gently.',
+      'Place over gentle heat (or hot pan sand) without stirring.',
+      'As it heats, a thick dark foam (köpük) will rise to the surface.',
+      'Just before boiling over, spoon the rich foam into serving cups.',
+      'Return pot to heat for 10 seconds, then pour the remaining coffee down the side of the cup without breaking the foam.',
+    ],
+    lore: 'Recognized as UNESCO Intangible Cultural Heritage, Turkish coffee is served with a small glass of water to cleanse the palate before the first sip.',
   },
 ];
 
@@ -148,20 +181,20 @@ export const ChaiMenuModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-150">
       <div className="w-full max-w-2xl max-h-[85vh] rounded-3xl glass-panel-deep shadow-2xl border border-[#ffecd6]/20 p-5 sm:p-6 flex flex-col gap-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#ffecd6]/10 pb-3 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#e8934a]/20 flex items-center justify-center text-[#f2b877]">
-              <Coffee className="w-4 h-4" />
+              <Globe className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-[#f5e9dc]">
-                The Tapri Menu & Secret Recipes
+                World Comfort Drinks & Brewing Rituals
               </h2>
               <p className="text-[11px] text-[#f5e9dc]/60">
-                Centuries of spice mastery, regional rituals, and brewing secrets
+                Centuries of tea, coffee, and spice mastery across world cultures
               </p>
             </div>
           </div>
@@ -182,13 +215,14 @@ export const ChaiMenuModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
               key={recipe.id}
               type="button"
               onClick={() => setSelectedRecipe(recipe)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
                 selectedRecipe.id === recipe.id
                   ? 'bg-[#e8934a] text-[#0b0705] font-semibold shadow-sm'
                   : 'bg-white/[0.04] text-[#f5e9dc]/70 hover:bg-white/10 hover:text-white'
               }`}
             >
-              {recipe.name.split(' ')[0]} {recipe.name.split(' ')[1]}
+              <span>{recipe.icon}</span>
+              <span>{recipe.name.split(' ')[0]}</span>
             </button>
           ))}
         </div>
@@ -198,11 +232,12 @@ export const ChaiMenuModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
           {/* Title Card */}
           <div className="p-4 rounded-2xl bg-white/[0.03] border border-[#ffecd6]/10 flex flex-col gap-1.5">
             <div className="flex items-baseline justify-between flex-wrap gap-2">
-              <h3 className="text-lg font-bold text-[#f5e9dc]">
-                {selectedRecipe.name}
-              </h3>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{selectedRecipe.icon}</span>
+                <h3 className="text-lg font-bold text-[#f5e9dc]">{selectedRecipe.name}</h3>
+              </div>
               <span className="font-devanagari text-sm font-semibold text-[#f2b877]">
-                {selectedRecipe.hindiName}
+                {selectedRecipe.nativeName}
               </span>
             </div>
 
@@ -210,7 +245,7 @@ export const ChaiMenuModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
               "{selectedRecipe.tagline}"
             </p>
 
-            <div className="flex items-center gap-3 text-[11px] text-[#f5e9dc]/60 pt-1">
+            <div className="flex items-center gap-3 text-[11px] text-[#f5e9dc]/60 pt-1 flex-wrap">
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3 text-[#f2b877]" />
                 {selectedRecipe.brewTime}
@@ -260,12 +295,12 @@ export const ChaiMenuModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
             </div>
           </div>
 
-          {/* Tapri Lore Callout */}
+          {/* Lore Callout */}
           <div className="p-3.5 rounded-2xl bg-[#e8934a]/10 border border-[#f2b877]/20 flex items-start gap-2.5">
             <Sparkles className="w-4 h-4 text-[#f2b877] shrink-0 mt-0.5" />
             <div className="text-xs text-[#f5e9dc]/90">
-              <strong className="text-[#f2b877]">Tapri Lore: </strong>
-              {selectedRecipe.tapriLore}
+              <strong className="text-[#f2b877]">Cultural Lore: </strong>
+              {selectedRecipe.lore}
             </div>
           </div>
         </div>

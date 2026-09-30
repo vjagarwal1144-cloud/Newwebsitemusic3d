@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Play, Pause, RotateCcw, Timer, Sparkles } from 'lucide-react';
+import { X, Play, Pause, RotateCcw, Timer, Sparkles, Heart } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 interface ChaiTimerModalProps {
@@ -13,7 +13,6 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
   const [isRunning, setIsRunning] = useState(false);
   const [breathPhase, setBreathPhase] = useState<'Inhale' | 'Hold' | 'Exhale'>('Inhale');
 
-  // Timer countdown
   useEffect(() => {
     let interval: number | null = null;
     if (isRunning && timeLeft > 0) {
@@ -29,7 +28,6 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
     };
   }, [isRunning, timeLeft]);
 
-  // Breathing circle rhythm (4s inhale, 4s hold, 4s exhale)
   useEffect(() => {
     if (!isRunning) return;
     const breathTimer = setInterval(() => {
@@ -62,18 +60,17 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
   const progress = 1 - timeLeft / (selectedMinutes * 60);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-150">
       <div className="w-full max-w-md rounded-3xl glass-panel-deep shadow-2xl border border-[#ffecd6]/20 p-6 flex flex-col items-center gap-5">
         {/* Header */}
         <div className="w-full flex items-center justify-between border-b border-[#ffecd6]/10 pb-3">
           <div className="flex items-center gap-2">
             <Timer className="w-4 h-4 text-[#f2b877]" />
             <span className="text-sm font-semibold text-[#f5e9dc]">
-              Chai Break & Stillness Timer
+              Mindful Stillness & Focus Timer
             </span>
           </div>
           <button
@@ -86,17 +83,19 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Preset Selector */}
-        <div className="flex items-center gap-2 p-1 rounded-2xl bg-white/[0.04] border border-[#ffecd6]/10">
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/[0.04] border border-[#ffecd6]/10 flex-wrap justify-center">
           {[
-            { m: 5, label: '5m Cutting' },
-            { m: 15, label: '15m Kadak' },
+            { m: 3, label: '3m Quick Sip' },
+            { m: 5, label: '5m Cutting Break' },
+            { m: 15, label: '15m Reset' },
             { m: 25, label: '25m Pomodoro' },
+            { m: 50, label: '50m Deep Flow' },
           ].map((item) => (
             <button
               key={item.m}
               type="button"
               onClick={() => handleSelectPreset(item.m)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
                 selectedMinutes === item.m
                   ? 'bg-[#e8934a] text-[#0b0705] shadow-sm font-semibold'
                   : 'text-[#f5e9dc]/70 hover:text-white'
@@ -108,8 +107,7 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Breathing Circle Visualizer */}
-        <div className="relative flex items-center justify-center w-52 h-52 my-2">
-          {/* Animated Glowing Ring */}
+        <div className="relative flex items-center justify-center w-52 h-52 my-1">
           <div
             className={`absolute rounded-full transition-all duration-[4000ms] ease-in-out border border-[#f2b877]/30 ${
               isRunning
@@ -122,7 +120,6 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
             }`}
           />
 
-          {/* SVG Progress Ring */}
           <svg className="w-48 h-48 -rotate-90">
             <circle
               cx="96"
@@ -148,7 +145,6 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
             />
           </svg>
 
-          {/* Inner Content */}
           <div className="absolute flex flex-col items-center justify-center pointer-events-none">
             <span className="text-3xl font-mono font-bold text-[#f5e9dc] tracking-tight tabular-nums">
               {formattedTime}
@@ -159,10 +155,9 @@ export const ChaiTimerModal: React.FC<ChaiTimerModalProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        {/* Gentle mindfulness prompt */}
         <p className="text-xs text-[#f5e9dc]/60 text-center max-w-xs italic font-display">
           {isRunning
-            ? `Breathe with the rising steam. Inhale the spice, let go of the noise.`
+            ? `Sync your breath with the circle. Inhale presence, release tension.`
             : `Set down your tasks, hold your warm cup, and take a moment of stillness.`}
         </p>
 
