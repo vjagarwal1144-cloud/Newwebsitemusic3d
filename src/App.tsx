@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ExperienceShell } from './components/ExperienceShell';
+import { ExperienceShell, SceneMode } from './components/ExperienceShell';
 import { SteamCanvas } from './components/SteamCanvas';
 import { TopBar } from './components/TopBar';
 import { HeroTitle } from './components/HeroTitle';
@@ -10,9 +10,10 @@ import { SoundMixerModal } from './components/SoundMixerModal';
 import { ChaiTimerModal } from './components/ChaiTimerModal';
 import { ChaiMenuModal } from './components/ChaiMenuModal';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
-import { audioEngine, ChaiAmbientMixer } from './utils/audioEngine';
+import { audioEngine, AmbientMixerState } from './utils/audioEngine';
 
 export function App() {
+  const [currentScene, setCurrentScene] = useState<SceneMode>('dusk');
   const [isPouring, setIsPouring] = useState(false);
   const [burstTrigger, setBurstTrigger] = useState(0);
 
@@ -24,7 +25,7 @@ export function App() {
   const [isPlaylistSwitcherOpen, setIsPlaylistSwitcherOpen] = useState(false);
 
   // Ambient sound mixer state
-  const [mixerState, setMixerState] = useState<ChaiAmbientMixer>(() => audioEngine.getMixerState());
+  const [mixerState, setMixerState] = useState<AmbientMixerState>(() => audioEngine.getMixerState());
   const [isAmbientActive, setIsAmbientActive] = useState(false);
 
   // YouTube Music Player hook with guaranteed first-time loading & ad-free stream
@@ -48,7 +49,7 @@ export function App() {
   }, [isPouring, isAmbientActive]);
 
   // Ambient Mixer Updates
-  const handleChangeMixer = (updated: Partial<ChaiAmbientMixer>) => {
+  const handleChangeMixer = (updated: Partial<AmbientMixerState>) => {
     audioEngine.setMixerLevels(updated);
     setMixerState(audioEngine.getMixerState());
   };
@@ -100,8 +101,11 @@ export function App() {
         className="fixed top-0 -left-[9999px] w-[2px] h-[2px] pointer-events-none opacity-0"
       />
 
-      {/* Atmospheric Visual Backdrop Shell with Authentic Chai Tapri Photo */}
-      <ExperienceShell>
+      {/* Atmospheric Visual Backdrop Shell with Authentic Chai Tapri Photo & Scene Mode */}
+      <ExperienceShell
+        currentScene={currentScene}
+        onSceneChange={setCurrentScene}
+      >
         {/* Top Navigation Bar with World Clock, "चाय की भाप" Button & Controls */}
         <TopBar
           isPouring={isPouring}

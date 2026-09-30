@@ -19,6 +19,8 @@ export interface AmbientMixerState {
   kettleWhistle: number;
 }
 
+export type ChaiAmbientMixer = AmbientMixerState;
+
 export const DEFAULT_MIXER: AmbientMixerState = {
   master: 0.7,
   chaiSimmer: 0.6,
@@ -27,6 +29,8 @@ export const DEFAULT_MIXER: AmbientMixerState = {
   nightCrickets: 0.15,
   kettleWhistle: 0.2,
 };
+
+export const DEFAULT_CHAI_MIXER = DEFAULT_MIXER;
 
 export const PRESET_PLAYLISTS = [
   {
@@ -65,7 +69,7 @@ class AudioController {
   private ctx: AudioContext | null = null;
   private ambientAudioEl: HTMLAudioElement | null = null;
   private isAmbientPlaying = false;
-  
+
   // Ambient nodes
   private masterGain: GainNode | null = null;
   private simmerGain: GainNode | null = null;
@@ -74,21 +78,25 @@ class AudioController {
   private cricketGain: GainNode | null = null;
   private kettleGain: GainNode | null = null;
   private ambientSources: { stop: () => void }[] = [];
-  
+
   private mixerState: AmbientMixerState = { ...DEFAULT_MIXER };
 
   constructor() {
     // Ambient mp3 fallback
     if (typeof window !== 'undefined') {
-      this.ambientAudioEl = new Audio(`${import.meta.env.BASE_URL}audio/chai-ambient.mp3`);
-      this.ambientAudioEl.loop = true;
-      this.ambientAudioEl.volume = 0.4;
+      try {
+        this.ambientAudioEl = new Audio(`${import.meta.env.BASE_URL}audio/chai-ambient.mp3`);
+        this.ambientAudioEl.loop = true;
+        this.ambientAudioEl.volume = 0.4;
+      } catch {}
     }
   }
 
   private initContext() {
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtx();
     }
     if (this.ctx.state === 'suspended') {
@@ -142,7 +150,7 @@ class AudioController {
 
       // 2. Micro bubbles (gurgles and frothing)
       for (let j = 0; j < 14; j++) {
-        const bubbleTime = now + 0.2 + (j / 14) * 1.8 + (Math.random() * 0.05);
+        const bubbleTime = now + 0.2 + (j / 14) * 1.8 + Math.random() * 0.05;
         const osc = ctx.createOscillator();
         const bGain = ctx.createGain();
         const startFreq = 400 + Math.random() * 500;
@@ -176,7 +184,6 @@ class AudioController {
         onComplete?.();
       }, duration * 1000);
     } catch {
-      // In case web audio is restricted, fall back cleanly
       onComplete?.();
     }
   }
@@ -194,7 +201,6 @@ class AudioController {
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(f, now);
-        
         gain.gain.setValueAtTime(weights[idx], now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
 
@@ -203,9 +209,7 @@ class AudioController {
         osc.start(now);
         osc.stop(now + 3.6);
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
   // Start continuous procedural ambient background soundscape
@@ -236,9 +240,7 @@ class AudioController {
 
       // Synthesize Kettle Steam
       this.setupKettleTrack(ctx);
-    } catch {
-      // silent fallback
-    }
+    } catch {}
   }
 
   private setupSimmerTrack(ctx: AudioContext) {
@@ -246,7 +248,6 @@ class AudioController {
     this.simmerGain.gain.setValueAtTime(this.mixerState.chaiSimmer * 0.4, ctx.currentTime);
     this.simmerGain.connect(this.masterGain!);
 
-    // Pink noise bandpass filter
     const bufferSize = ctx.sampleRate * 2;
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const out = noiseBuffer.getChannelData(0);
@@ -268,8 +269,10 @@ class AudioController {
 
     this.ambientSources.push({
       stop: () => {
-        try { source.stop(); } catch {}
-      }
+        try {
+          source.stop();
+        } catch {}
+      },
     });
   }
 
@@ -281,12 +284,14 @@ class AudioController {
     const bufferSize = ctx.sampleRate * 3;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
-    let b0 = 0, b1 = 0, b2 = 0;
+    let b0 = 0,
+      b1 = 0,
+      b2 = 0;
     for (let i = 0; i < bufferSize; i++) {
       const white = Math.random() * 2 - 1;
       b0 = 0.99886 * b0 + white * 0.0555179;
       b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
+      b2 = 0.969 * b2 + white * 0.153852;
       data[i] = (b0 + b1 + b2) * 0.25;
     }
 
@@ -304,8 +309,10 @@ class AudioController {
 
     this.ambientSources.push({
       stop: () => {
-        try { source.stop(); } catch {}
-      }
+        try {
+          source.stop();
+        } catch {}
+      },
     });
   }
 
@@ -330,8 +337,11 @@ class AudioController {
 
     this.ambientSources.push({
       stop: () => {
-        try { osc.stop(); lfo.stop(); } catch {}
-      }
+        try {
+          osc.stop();
+          lfo.stop();
+        } catch {}
+      },
     });
   }
 
@@ -361,14 +371,16 @@ class AudioController {
 
     this.ambientSources.push({
       stop: () => {
-        try { source.stop(); } catch {}
-      }
+        try {
+          source.stop();
+        } catch {}
+      },
     });
   }
 
   public stopAmbientSoundscape() {
     this.isAmbientPlaying = false;
-    this.ambientSources.forEach(s => s.stop());
+    this.ambientSources.forEach((s) => s.stop());
     this.ambientSources = [];
     if (this.ambientAudioEl) {
       this.ambientAudioEl.pause();

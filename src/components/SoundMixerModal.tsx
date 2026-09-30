@@ -2,20 +2,20 @@ import React from 'react';
 import {
   X,
   CloudRain,
-  Flame,
   Volume2,
   RotateCcw,
   Sparkles,
-  Waves,
   Coffee,
+  Wind,
+  Bell,
 } from 'lucide-react';
-import { ChaiAmbientMixer, DEFAULT_CHAI_MIXER } from '../utils/audioEngine';
+import { AmbientMixerState, DEFAULT_MIXER } from '../utils/audioEngine';
 
 interface SoundMixerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mixer: ChaiAmbientMixer;
-  onChangeMixer: (updated: Partial<ChaiAmbientMixer>) => void;
+  mixer: AmbientMixerState;
+  onChangeMixer: (updated: Partial<AmbientMixerState>) => void;
   isAmbientActive: boolean;
   onToggleAmbient: () => void;
 }
@@ -32,44 +32,44 @@ export const SoundMixerModal: React.FC<SoundMixerModalProps> = ({
 
   const channels = [
     {
-      key: 'simmer' as const,
+      key: 'chaiSimmer' as const,
       label: 'Spiced Chai Simmer',
       sub: 'Crushed ginger, cardamom & boiling tea leaves',
       icon: Coffee,
-      value: mixer.simmer,
+      value: mixer.chaiSimmer,
       color: '#e8934a',
     },
     {
-      key: 'rain' as const,
+      key: 'monsoonRain' as const,
       label: 'Delhi Monsoon Rain',
       sub: 'Warm rainfall on tin roof & wet pavement',
       icon: CloudRain,
-      value: mixer.rain,
+      value: mixer.monsoonRain,
       color: '#60a5fa',
     },
     {
-      key: 'fire' as const,
-      label: 'Coal Stove & Embers',
-      sub: 'Soft crackle of clay stove firewood',
-      icon: Flame,
-      value: mixer.fire,
+      key: 'streetAmbience' as const,
+      label: 'Roadside Tapri Ambience',
+      sub: 'Distant market murmur & cycle rickshaw chimes',
+      icon: Wind,
+      value: mixer.streetAmbience,
       color: '#fb923c',
     },
     {
-      key: 'crickets' as const,
+      key: 'nightCrickets' as const,
       label: 'Night Garden Crickets',
       sub: 'Gentle nocturnal peaceful chirping',
       icon: Sparkles,
-      value: mixer.crickets,
+      value: mixer.nightCrickets,
       color: '#a3e635',
     },
     {
-      key: 'alpha' as const,
-      label: '432Hz Alpha Focus Waves',
-      sub: 'Deep work & flow state meditation frequency',
-      icon: Waves,
-      value: mixer.alpha,
-      color: '#c084fc',
+      key: 'kettleWhistle' as const,
+      label: 'Brass Kettle Whistle',
+      sub: 'Soft steam hiss from boiling brass kettle',
+      icon: Bell,
+      value: mixer.kettleWhistle,
+      color: '#f59e0b',
     },
   ];
 
@@ -87,7 +87,7 @@ export const SoundMixerModal: React.FC<SoundMixerModalProps> = ({
                 Tapri Ambient Soundscape Mixer
               </h2>
               <p className="text-[11px] text-[#f5e9dc]/60">
-                Layer chai simmer, monsoon rain, coal embers & 432Hz alpha waves
+                Layer chai simmer, monsoon rain, street ambience & kettle steam
               </p>
             </div>
           </div>
@@ -186,11 +186,11 @@ export const SoundMixerModal: React.FC<SoundMixerModalProps> = ({
               type="button"
               onClick={() =>
                 onChangeMixer({
-                  simmer: 0.8,
-                  rain: 0.6,
-                  fire: 0.2,
-                  crickets: 0.1,
-                  alpha: 0.25,
+                  chaiSimmer: 0.8,
+                  monsoonRain: 0.6,
+                  streetAmbience: 0.2,
+                  nightCrickets: 0.1,
+                  kettleWhistle: 0.3,
                 })
               }
               className="px-2.5 py-1 rounded-xl bg-white/[0.05] hover:bg-white/10 text-[10px] text-white transition-colors"
@@ -201,11 +201,11 @@ export const SoundMixerModal: React.FC<SoundMixerModalProps> = ({
               type="button"
               onClick={() =>
                 onChangeMixer({
-                  simmer: 0.3,
-                  rain: 0.2,
-                  fire: 0.1,
-                  crickets: 0.4,
-                  alpha: 0.7,
+                  chaiSimmer: 0.4,
+                  monsoonRain: 0.15,
+                  streetAmbience: 0.05,
+                  nightCrickets: 0.5,
+                  kettleWhistle: 0.1,
                 })
               }
               className="px-2.5 py-1 rounded-xl bg-white/[0.05] hover:bg-white/10 text-[10px] text-white transition-colors"
@@ -214,7 +214,7 @@ export const SoundMixerModal: React.FC<SoundMixerModalProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => onChangeMixer(DEFAULT_CHAI_MIXER)}
+              onClick={() => onChangeMixer(DEFAULT_MIXER)}
               title="Reset to default levels"
               className="p-1 rounded-xl bg-white/[0.05] hover:bg-white/10 text-white transition-colors"
             >

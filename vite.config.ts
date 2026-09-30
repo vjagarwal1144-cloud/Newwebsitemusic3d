@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => ({
-  // GitHub Pages serves this project under /Newwebsitemusic3d/,
-  // while Vercel serves it from the domain root.
-  base: process.env.VERCEL ? '/' : '/Newwebsitemusic3d/',
+  // In GitHub Pages (GitHub Actions), serve under /Newwebsitemusic3d/
+  // In AI Studio preview and Vercel, serve under standard root './' or '/'
+  base: process.env.GITHUB_ACTIONS ? '/Newwebsitemusic3d/' : (process.env.VERCEL ? '/' : './'),
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

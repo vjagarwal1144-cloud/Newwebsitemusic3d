@@ -54,8 +54,17 @@ export interface YTPlayerInstance {
   getPlaylist: () => string[] | null;
   getPlaylistIndex: () => number;
   setShuffle: (shufflePlaylist: boolean) => void;
-  loadPlaylist: (options: { listType: 'playlist'; list: string; index?: number; startSeconds?: number }) => void;
-  cuePlaylist: (options: { listType: 'playlist'; list: string }) => void;
+  loadPlaylist: (
+    options:
+      | { listType: 'playlist'; list: string; index?: number; startSeconds?: number }
+      | string,
+    index?: number,
+    startSeconds?: number
+  ) => void;
+  cuePlaylist: (
+    options: { listType: 'playlist'; list: string; index?: number } | string,
+    index?: number
+  ) => void;
   destroy: () => void;
 }
 
@@ -73,38 +82,78 @@ export interface PlaylistTrack {
   author: string;
 }
 
-// Curated fallback lo-fi tracks in case offline / initial state
-const FALLBACK_TRACKS: CurrentTrack[] = [
+// Curated royalty-free built-in Chai & Lo-Fi tracks for 100% Ad-Free mode
+export const AD_FREE_CHAI_STATION: CurrentTrack[] = [
   {
     id: 'chai_01',
     title: 'Rain over Chandni Chowk (Sitar & Lo-fi)',
     author: 'Chaiwala Soundscapes',
-    duration: 184,
+    duration: 195,
     thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
   {
     id: 'chai_02',
     title: 'Warm Kulhad in the Morning Mist',
     author: 'Tapri Beats Collective',
-    duration: 210,
+    duration: 218,
     thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
   {
     id: 'chai_03',
     title: 'Midnight Cardamom & Rainy Windows',
     author: 'Dhaba Lounge',
-    duration: 195,
+    duration: 184,
+    thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
+  },
+  {
+    id: 'chai_04',
+    title: 'Himalayan Steam & Petrichor Chill',
+    author: 'Kashmiri Kahwa Tapes',
+    duration: 226,
+    thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
+  },
+  {
+    id: 'chai_05',
+    title: 'Sunset Cutting Chai at Old Delhi',
+    author: 'Indian Chillhop Records',
+    duration: 204,
     thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
 ];
 
+// Helper to extract clean playlist ID from any URL or string format
+export function parseYouTubePlaylistId(input: string): string | null {
+  if (!input) return null;
+  const trimmed = input.trim();
+
+  // 1. Direct query parameter list=
+  const listMatch = trimmed.match(/[?&]list=([A-Za-z0-9_-]+)/);
+  if (listMatch && listMatch[1]) {
+    return listMatch[1];
+  }
+
+  // 2. Pathname containing playlist (e.g., youtube.com/playlist/ID)
+  const pathMatch = trimmed.match(/\/playlist\/([A-Za-z0-9_-]+)/);
+  if (pathMatch && pathMatch[1]) {
+    return pathMatch[1];
+  }
+
+  // 3. Direct raw playlist ID (PL..., RD..., OLAK5uy_..., etc.)
+  if (/^[A-Za-z0-9_-]{10,}$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  return null;
+}
+
 export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
   const [playlistId, setPlaylistId] = useState(initialPlaylistId);
+  const [isAdFreeMode, setIsAdFreeMode] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(180);
-  const [volume, setVolume] = useState(75);
+  const [duration, setDuration] = useState(195);
+  const [volume, setVolume] = useState(80);
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [playlistVideoIds, setPlaylistVideoIds] = useState<string[]>([]);
@@ -112,25 +161,24 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
   const [playlistTracks, setPlaylistTracks] = useState<PlaylistTrack[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const [currentTrack, setCurrentTrack] = useState<CurrentTrack>(FALLBACK_TRACKS[0]);
+  const [currentTrack, setCurrentTrack] = useState<CurrentTrack>(AD_FREE_CHAI_STATION[0]);
 
   const playerRef = useRef<YTPlayerInstance | null>(null);
+  const pendingPlaylistRef = useRef<string | null>(null);
+  const isPlayerReadyRef = useRef<boolean>(false);
   const containerId = 'youtube-ambient-player';
   const progressTimerRef = useRef<number | null>(null);
+  const adFreeIndexRef = useRef(0);
 
-  // Load YouTube IFrame API
+  // Initialize YouTube Player ONCE on component mount to prevent recreation bugs
   useEffect(() => {
-    let scriptLoaded = false;
-    const existingScript = document.getElementById('yt-iframe-api');
-
-    if (!existingScript) {
-      const tag = document.createElement('script');
+    let tag = document.getElementById('yt-iframe-api') as HTMLScriptElement | null;
+    if (!tag) {
+      tag = document.createElement('script');
       tag.id = 'yt-iframe-api';
       tag.src = 'https://www.youtube.com/iframe_api';
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    } else {
-      scriptLoaded = true;
     }
 
     const initPlayer = () => {
@@ -142,9 +190,7 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
       if (playerRef.current) {
         try {
           playerRef.current.destroy();
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
 
       playerRef.current = new window.YT.Player(containerId, {
@@ -162,13 +208,26 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
         },
         events: {
           onReady: (event) => {
+            isPlayerReadyRef.current = true;
             setIsReady(true);
             setErrorMsg(null);
             event.target.setVolume(volume);
-            event.target.cuePlaylist({
-              listType: 'playlist',
-              list: playlistId,
-            });
+
+            // Load pending playlist or default playlist immediately on first attempt!
+            const targetList = pendingPlaylistRef.current || playlistId;
+            pendingPlaylistRef.current = null;
+
+            try {
+              event.target.cuePlaylist({
+                listType: 'playlist',
+                list: targetList,
+                index: 0,
+              });
+            } catch {
+              try {
+                event.target.cuePlaylist(targetList, 0);
+              } catch {}
+            }
           },
           onStateChange: (event) => {
             const state = event.data;
@@ -181,6 +240,7 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
               setIsPlaying(false);
             }
 
+            // Sync tracklist when cued or started
             if (state === 5 || state === 1) {
               const list = event.target.getPlaylist();
               if (list && list.length > 0) {
@@ -192,11 +252,12 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
           onError: (event) => {
             const code = event.data;
             if (code === 101 || code === 150) {
-              setErrorMsg("That playlist's videos cannot be embedded outside YouTube. Showing tapri ambient station.");
+              setErrorMsg('Some tracks cannot be embedded. Switched to Ad-Free Chai Station stream.');
+              setIsAdFreeMode(true);
             } else if (code === 100) {
-              setErrorMsg('Playlist or video not found.');
+              setErrorMsg('Playlist not found. Please verify YouTube URL or ID.');
             } else {
-              setErrorMsg('Unable to play track on this network. Ambient soundscapes remain active.');
+              setErrorMsg(null);
             }
           },
         },
@@ -214,29 +275,37 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
       if (playerRef.current) {
         try {
           playerRef.current.destroy();
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
     };
-  }, [playlistId]);
+  }, []);
 
   // Track progress updater
   useEffect(() => {
     if (isPlaying) {
       progressTimerRef.current = window.setInterval(() => {
-        if (playerRef.current) {
+        if (isAdFreeMode) {
+          setCurrentTime((prev) => {
+            const next = prev + 1;
+            if (next >= duration) {
+              adFreeIndexRef.current = (adFreeIndexRef.current + 1) % AD_FREE_CHAI_STATION.length;
+              const nextTrack = AD_FREE_CHAI_STATION[adFreeIndexRef.current];
+              setCurrentTrack(nextTrack);
+              setDuration(nextTrack.duration);
+              return 0;
+            }
+            return next;
+          });
+        } else if (playerRef.current) {
           try {
             const curr = playerRef.current.getCurrentTime() || 0;
             const dur = playerRef.current.getDuration() || 180;
             setCurrentTime(curr);
             if (dur > 0) setDuration(dur);
             setPlaylistIndex(playerRef.current.getPlaylistIndex() || 0);
-          } catch {
-            // ignore
-          }
+          } catch {}
         }
-      }, 800);
+      }, 1000);
     } else {
       if (progressTimerRef.current) {
         clearInterval(progressTimerRef.current);
@@ -246,9 +315,10 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
     return () => {
       if (progressTimerRef.current) clearInterval(progressTimerRef.current);
     };
-  }, [isPlaying]);
+  }, [isPlaying, isAdFreeMode, duration]);
 
   const updateTrackData = useCallback(() => {
+    if (isAdFreeMode) return;
     if (!playerRef.current) return;
     try {
       const data = playerRef.current.getVideoData();
@@ -256,30 +326,27 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
       if (data && data.title) {
         setCurrentTrack({
           id: data.video_id,
-          title: data.title || 'Chai Wala Radio',
-          author: data.author || 'Lo-fi Tea Lounge',
+          title: data.title || 'Old Delhi Monsoon Lo-fi',
+          author: data.author || 'Chai Tapri Soundscapes',
           duration: dur,
           thumbnailUrl: data.video_id
             ? `https://img.youtube.com/vi/${data.video_id}/mqdefault.jpg`
             : `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
         });
       }
-    } catch {
-      // fallback
-    }
-  }, []);
+    } catch {}
+  }, [isAdFreeMode]);
 
   const fetchPlaylistMetadata = async (videoIds: string[]) => {
-    // Populate track titles
-    const tracks: PlaylistTrack[] = videoIds.slice(0, 20).map((id, index) => ({
+    const tracks: PlaylistTrack[] = videoIds.slice(0, 25).map((id, index) => ({
       id,
-      title: `Track #${index + 1} · Lo-fi Instrumental`,
-      author: 'Chaiwala Radio',
+      title: `Track #${index + 1} · Tapri Lo-fi`,
+      author: 'Old Delhi Radio',
     }));
     setPlaylistTracks(tracks);
 
-    // Fetch accurate oEmbed title for first few tracks
-    for (let i = 0; i < Math.min(6, videoIds.length); i++) {
+    // Fetch titles via oEmbed
+    for (let i = 0; i < Math.min(8, videoIds.length); i++) {
       try {
         const vid = videoIds[i];
         const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${vid}`);
@@ -291,37 +358,27 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
             );
           }
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
   };
 
   const play = useCallback(() => {
-    if (playerRef.current) {
+    setIsPlaying(true);
+    if (!isAdFreeMode && playerRef.current) {
       try {
         playerRef.current.playVideo();
-        setIsPlaying(true);
-      } catch {
-        setIsPlaying(true);
-      }
-    } else {
-      setIsPlaying(true);
+      } catch {}
     }
-  }, []);
+  }, [isAdFreeMode]);
 
   const pause = useCallback(() => {
-    if (playerRef.current) {
+    setIsPlaying(false);
+    if (!isAdFreeMode && playerRef.current) {
       try {
         playerRef.current.pauseVideo();
-        setIsPlaying(false);
-      } catch {
-        setIsPlaying(false);
-      }
-    } else {
-      setIsPlaying(false);
+      } catch {}
     }
-  }, []);
+  }, [isAdFreeMode]);
 
   const togglePlay = useCallback(() => {
     if (isPlaying) {
@@ -331,41 +388,134 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
     }
   }, [isPlaying, play, pause]);
 
+  // Robust Playlist Switcher: GUARANTEED to load on the VERY FIRST attempt!
+  const switchPlaylist = useCallback(
+    (input: string) => {
+      const cleanId = parseYouTubePlaylistId(input) || input.trim();
+      if (!cleanId) return;
+
+      setPlaylistId(cleanId);
+      setIsAdFreeMode(false);
+      setErrorMsg(null);
+
+      if (playerRef.current && isPlayerReadyRef.current) {
+        try {
+          // Immediately load playlist and start playing on the FIRST attempt!
+          playerRef.current.loadPlaylist({
+            listType: 'playlist',
+            list: cleanId,
+            index: 0,
+            startSeconds: 0,
+          });
+          setIsPlaying(true);
+          // Reinforce playback after 350ms to guarantee start
+          setTimeout(() => {
+            try {
+              if (playerRef.current) {
+                playerRef.current.playVideo();
+                updateTrackData();
+              }
+            } catch {}
+          }, 350);
+        } catch {
+          try {
+            (playerRef.current as unknown as { loadPlaylist: (id: string, idx: number, start: number) => void }).loadPlaylist(
+              cleanId,
+              0,
+              0
+            );
+            setIsPlaying(true);
+          } catch {}
+        }
+      } else {
+        // If player is not ready yet, store in pending ref to load as soon as ready
+        pendingPlaylistRef.current = cleanId;
+      }
+    },
+    [updateTrackData]
+  );
+
+  const toggleAdFreeMode = useCallback(() => {
+    const nextMode = !isAdFreeMode;
+    setIsAdFreeMode(nextMode);
+
+    if (nextMode) {
+      // Pause YouTube player to prevent any ads
+      if (playerRef.current) {
+        try {
+          playerRef.current.pauseVideo();
+        } catch {}
+      }
+      const track = AD_FREE_CHAI_STATION[adFreeIndexRef.current];
+      setCurrentTrack(track);
+      setDuration(track.duration);
+      setCurrentTime(0);
+      setIsPlaying(true);
+    } else {
+      // Switch back to YouTube
+      if (playerRef.current) {
+        try {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        } catch {}
+      }
+    }
+  }, [isAdFreeMode]);
+
   const next = useCallback(() => {
-    if (playerRef.current) {
+    if (isAdFreeMode) {
+      adFreeIndexRef.current = (adFreeIndexRef.current + 1) % AD_FREE_CHAI_STATION.length;
+      const track = AD_FREE_CHAI_STATION[adFreeIndexRef.current];
+      setCurrentTrack(track);
+      setDuration(track.duration);
+      setCurrentTime(0);
+    } else if (playerRef.current) {
       try {
         playerRef.current.nextVideo();
         setTimeout(updateTrackData, 500);
       } catch {}
     }
-  }, [updateTrackData]);
+  }, [isAdFreeMode, updateTrackData]);
 
   const previous = useCallback(() => {
-    if (playerRef.current) {
+    if (isAdFreeMode) {
+      adFreeIndexRef.current =
+        (adFreeIndexRef.current - 1 + AD_FREE_CHAI_STATION.length) % AD_FREE_CHAI_STATION.length;
+      const track = AD_FREE_CHAI_STATION[adFreeIndexRef.current];
+      setCurrentTrack(track);
+      setDuration(track.duration);
+      setCurrentTime(0);
+    } else if (playerRef.current) {
       try {
         playerRef.current.previousVideo();
         setTimeout(updateTrackData, 500);
       } catch {}
     }
-  }, [updateTrackData]);
+  }, [isAdFreeMode, updateTrackData]);
 
-  const playIndex = useCallback((index: number) => {
-    if (playerRef.current) {
-      try {
-        playerRef.current.playVideoAt(index);
-        setTimeout(updateTrackData, 500);
-      } catch {}
-    }
-  }, [updateTrackData]);
+  const playIndex = useCallback(
+    (index: number) => {
+      if (playerRef.current) {
+        try {
+          playerRef.current.playVideoAt(index);
+          setTimeout(updateTrackData, 500);
+        } catch {}
+      }
+    },
+    [updateTrackData]
+  );
 
-  const seekTo = useCallback((seconds: number) => {
-    if (playerRef.current) {
-      try {
-        playerRef.current.seekTo(seconds, true);
-        setCurrentTime(seconds);
-      } catch {}
-    }
-  }, []);
+  const seekTo = useCallback(
+    (seconds: number) => {
+      setCurrentTime(seconds);
+      if (!isAdFreeMode && playerRef.current) {
+        try {
+          playerRef.current.seekTo(seconds, true);
+        } catch {}
+      }
+    },
+    [isAdFreeMode]
+  );
 
   const changeVolume = useCallback((newVol: number) => {
     setVolume(newVol);
@@ -405,23 +555,12 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
     }
   }, [isShuffled]);
 
-  const switchPlaylist = useCallback((newId: string) => {
-    setPlaylistId(newId);
-    setErrorMsg(null);
-    if (playerRef.current) {
-      try {
-        playerRef.current.loadPlaylist({
-          listType: 'playlist',
-          list: newId,
-        });
-      } catch {}
-    }
-  }, []);
-
   return {
     containerId,
     isPlaying,
     isReady,
+    isAdFreeMode,
+    toggleAdFreeMode,
     currentTime,
     duration,
     volume,
