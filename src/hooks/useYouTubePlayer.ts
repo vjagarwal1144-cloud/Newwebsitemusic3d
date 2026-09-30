@@ -80,21 +80,21 @@ const FALLBACK_TRACKS: CurrentTrack[] = [
     title: 'Rain over Chandni Chowk (Sitar & Lo-fi)',
     author: 'Chaiwala Soundscapes',
     duration: 184,
-    thumbnailUrl: '/background/chaiwala.jpg',
+    thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
   {
     id: 'chai_02',
     title: 'Warm Kulhad in the Morning Mist',
     author: 'Tapri Beats Collective',
     duration: 210,
-    thumbnailUrl: '/background/chaiwala.jpg',
+    thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
   {
     id: 'chai_03',
     title: 'Midnight Cardamom & Rainy Windows',
     author: 'Dhaba Lounge',
     duration: 195,
-    thumbnailUrl: '/background/chaiwala.jpg',
+    thumbnailUrl: `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
   },
 ];
 
@@ -261,7 +261,7 @@ export function useYouTubePlayer(initialPlaylistId = 'PLSW-rtFaY_80') {
           duration: dur,
           thumbnailUrl: data.video_id
             ? `https://img.youtube.com/vi/${data.video_id}/mqdefault.jpg`
-            : '/background/chaiwala.jpg',
+            : `${import.meta.env.BASE_URL}background/chaiwala.jpg`,
         });
       }
     } catch {
