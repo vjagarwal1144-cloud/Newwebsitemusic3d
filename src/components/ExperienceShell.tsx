@@ -94,7 +94,7 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
       <div
         className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-out opacity-85"
         style={{
-          backgroundImage: 'url(/background/chaiwala.jpg)',
+          backgroundImage: `url(${import.meta.env.BASE_URL}background/chaiwala.jpg)`,
           mixBlendMode: 'screen',
         }}
       />
