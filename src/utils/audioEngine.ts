@@ -80,7 +80,7 @@ class AudioController {
   constructor() {
     // Ambient mp3 fallback
     if (typeof window !== 'undefined') {
-      this.ambientAudioEl = new Audio('/audio/chai-ambient.mp3');
+      this.ambientAudioEl = new Audio(`${import.meta.env.BASE_URL}audio/chai-ambient.mp3`);
       this.ambientAudioEl.loop = true;
       this.ambientAudioEl.volume = 0.4;
     }
