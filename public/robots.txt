@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chaiwala-gamma.vercel.app/sitemap.xml
