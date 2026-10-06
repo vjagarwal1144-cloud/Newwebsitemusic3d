@@ -1,7 +1,7 @@
 {
-  "name": "Chai Wala — Steam. Stillness. Chai.",
-  "short_name": "Chai Wala",
-  "description": "A relaxing digital Indian tea stall with lo-fi music, chai sounds, tapri ambience and focus timers.",
+  "name": "Chai With Music — Lo-fi, Study & Indian Ambience",
+  "short_name": "Chai Music",
+  "description": "A relaxing online music experience with lo-fi music, study music, Indian chai ambience and focus sounds.",
   "start_url": "/?ref=pwa",
   "scope": "/",
   "display": "standalone",
