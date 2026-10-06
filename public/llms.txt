@@ -1,0 +1,32 @@
+# Chai With Music
+
+> Free, ad-free browser listening room for lo-fi, study, focus, relaxing music and Indian chai ambience.
+
+## Main site
+- https://chaiwithmusic.vercel.app/
+
+## Music and listening pages
+- https://chaiwithmusic.vercel.app/music/
+- https://chaiwithmusic.vercel.app/lofi-music/
+- https://chaiwithmusic.vercel.app/study-music/
+- https://chaiwithmusic.vercel.app/focus-music/
+- https://chaiwithmusic.vercel.app/relaxing-music/
+- https://chaiwithmusic.vercel.app/indian-ambience/
+- https://chaiwithmusic.vercel.app/chai-ambience/
+
+## Guides
+- https://chaiwithmusic.vercel.app/guides/
+- https://chaiwithmusic.vercel.app/guides/lofi-music-for-studying/
+- https://chaiwithmusic.vercel.app/guides/focus-music-for-coding/
+
+## Resources and launch information
+- https://chaiwithmusic.vercel.app/resources/
+- https://chaiwithmusic.vercel.app/launch/
+- https://chaiwithmusic.vercel.app/promote/
+
+## Trust
+- https://chaiwithmusic.vercel.app/about/
+- https://chaiwithmusic.vercel.app/privacy/
+
+## Sitemap
+- https://chaiwithmusic.vercel.app/sitemap.xml
