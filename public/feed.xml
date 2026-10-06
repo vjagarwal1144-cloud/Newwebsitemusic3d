@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Chai With Music — Music Guides</title>
+<link>https://chaiwithmusic.vercel.app/</link>
+<description>Practical guides for study music, focus music, lo-fi listening and Indian ambience.</description>
+<language>en-in</language>
+<item><title>How to use lo-fi music for studying</title><link>https://chaiwithmusic.vercel.app/guides/lofi-music-for-studying/</link><guid>https://chaiwithmusic.vercel.app/guides/lofi-music-for-studying/</guid><description>Practical ideas for using lo-fi music during study sessions.</description></item>
+<item><title>How to use focus music for coding</title><link>https://chaiwithmusic.vercel.app/guides/focus-music-for-coding/</link><guid>https://chaiwithmusic.vercel.app/guides/focus-music-for-coding/</guid><description>Practical ideas for building a focused coding sound environment.</description></item>
+</channel>
+</rss>
