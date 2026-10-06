@@ -37,6 +37,16 @@ export const HeroTitle: React.FC = () => {
         <p className="text-xs sm:text-sm text-[#f5e9dc]/70 max-w-lg font-sans tracking-wide">
           Relaxing lo-fi music, study music and Indian chai ambience for focus, work, reading and slow moments.
         </p>
+        <nav
+          aria-label="Explore music topics"
+          className="pointer-events-auto mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs"
+        >
+          <a className="text-[#f2b877]/90 hover:text-[#ffecd6] underline underline-offset-4" href="/lofi-music/">Lo-fi</a>
+          <a className="text-[#f2b877]/90 hover:text-[#ffecd6] underline underline-offset-4" href="/study-music/">Study</a>
+          <a className="text-[#f2b877]/90 hover:text-[#ffecd6] underline underline-offset-4" href="/focus-music/">Focus</a>
+          <a className="text-[#f2b877]/90 hover:text-[#ffecd6] underline underline-offset-4" href="/relaxing-music/">Relax</a>
+          <a className="text-[#f2b877]/90 hover:text-[#ffecd6] underline underline-offset-4" href="/indian-ambience/">Indian ambience</a>
+        </nav>
       </div>
     </div>
   );
