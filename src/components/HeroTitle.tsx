@@ -22,10 +22,7 @@ export const HeroTitle: React.FC = () => {
       <h1 className="font-extrabold tracking-tight text-white drop-shadow-[0_8px_32px_rgba(0,0,0,0.85)] leading-tight text-4xl sm:text-6xl md:text-7xl lg:text-8xl transition-all flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
         <span className="font-devanagari text-[#f2b877]">चाय वाला</span>
         <span className="font-serif italic text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#ffecd6]">
-          Chai Wala
-        </span>
-        <span className="font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl align-baseline tracking-normal text-[#e8934a]">
-          .live
+          Chai With Music
         </span>
       </h1>
 
