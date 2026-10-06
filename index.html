@@ -20,6 +20,7 @@
 />
 
 <link rel="manifest" href="./manifest.webmanifest" />
+<link rel="alternate" type="application/rss+xml" title="Chai With Music Guides" href="./feed.xml" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -53,6 +54,8 @@
 <meta property="og:url" content="https://chaiwithmusic.vercel.app/" />
 <meta property="og:site_name" content="Chai With Music" />
 <meta property="og:image" content="https://chaiwithmusic.vercel.app/background/chaiwala.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="Chai With Music digital Indian tea stall" />
 <meta property="og:locale" content="en_IN" />
 
@@ -77,7 +80,7 @@
 >
 
 <link
-  href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700,0,800;1,600&family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
   rel="stylesheet"
 >
 
@@ -85,8 +88,24 @@
 {
   "@context":"https://schema.org",
   "@graph":[
-    {"@type":"WebSite","name":"Chai With Music","url":"https://chaiwithmusic.vercel.app/","description":"Lo-fi, study, focus and relaxing music with Indian chai ambience.","inLanguage":"en-IN"},
-    {"@type":"WebApplication","name":"Chai With Music","url":"https://chaiwithmusic.vercel.app/","description":"A relaxing digital music experience with lo-fi music, study music, focus music, Indian chai ambience, tapri sounds and stillness timers.","applicationCategory":"EntertainmentApplication","operatingSystem":"Web","inLanguage":"en-IN"}
+    {
+      "@type":"WebSite",
+      "name":"Chai With Music",
+      "url":"https://chaiwithmusic.vercel.app/",
+      "description":"Lo-fi, study, focus and relaxing music with Indian chai ambience.",
+      "inLanguage":"en-IN"
+    },
+    {
+      "@type":"WebApplication",
+      "name":"Chai With Music",
+      "url":"https://chaiwithmusic.vercel.app/",
+      "description":"A relaxing digital music experience with lo-fi music, study music, focus music, Indian chai ambience, tapri sounds and stillness timers.",
+      "applicationCategory":"EntertainmentApplication",
+      "operatingSystem":"Web",
+      "inLanguage":"en-IN",
+      "isAccessibleForFree":true,
+      "offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}
+    }
   ]
 }
 </script>
