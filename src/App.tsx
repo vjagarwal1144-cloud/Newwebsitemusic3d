@@ -9,6 +9,8 @@ import { PlaylistSwitcher } from './components/PlaylistSwitcher';
 import { SoundMixerModal } from './components/SoundMixerModal';
 import { ChaiTimerModal } from './components/ChaiTimerModal';
 import { ChaiMenuModal } from './components/ChaiMenuModal';
+import { ShareModal } from './components/ShareModal';
+import { initAnalytics, trackEvent } from './utils/analytics';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { audioEngine, AmbientMixerState } from './utils/audioEngine';
 
@@ -23,6 +25,7 @@ export function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
   const [isPlaylistSwitcherOpen, setIsPlaylistSwitcherOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Ambient sound mixer state
   const [mixerState, setMixerState] = useState<AmbientMixerState>(() => audioEngine.getMixerState());
@@ -30,6 +33,13 @@ export function App() {
 
   // YouTube Music Player hook with guaranteed first-time loading & ad-free stream
   const yt = useYouTubePlayer('PLSW-rtFaY_80');
+
+  useEffect(() => {
+    initAnalytics();
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) trackEvent('referral_visit', { ref });
+    trackEvent('page_view_custom', { ref: ref || 'direct' });
+  }, []);
 
   // Trigger Traditional Cutting Chai Pour
   const handlePour = useCallback(() => {
@@ -115,6 +125,10 @@ export function App() {
           onOpenMixer={() => setIsMixerOpen(true)}
           onOpenTimer={() => setIsTimerOpen(true)}
           onOpenMenu={() => setIsMenuOpen(true)}
+          onOpenShare={() => {
+            setIsShareOpen(true);
+            trackEvent('share_opened');
+          }}
         />
 
         {/* Center Hero Title */}
@@ -191,6 +205,8 @@ export function App() {
         isOpen={isTimerOpen}
         onClose={() => setIsTimerOpen(false)}
       />
+
+      <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
 
       {/* World Comfort Drinks & Chai Brewing Recipes Modal */}
       <ChaiMenuModal
