@@ -15,7 +15,7 @@ export const HeroTitle: React.FC = () => {
       {/* Traditional Tapri Badge */}
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffecd6]/[0.06] border border-[#ffecd6]/15 text-[11px] text-[#f5e9dc]/80 backdrop-blur-md mb-2 shadow-sm">
         <Coffee className="w-3 h-3 text-[#f2b877]" />
-        <span>Old Delhi Tapri · Sunset Kadak Brew · 18:30</span>
+        <span>Indian Chai Ambience · Lo-fi · Focus Music</span>
       </div>
 
       {/* Devanagari & English Hero Title with .live accent */}
@@ -35,7 +35,7 @@ export const HeroTitle: React.FC = () => {
           "Steam. Stillness. Chai."
         </p>
         <p className="text-xs sm:text-sm text-[#f5e9dc]/70 max-w-lg font-sans tracking-wide">
-          An atmospheric digital tea stall for focus, calmness, and mindful listening.
+          Relaxing lo-fi music, study music and Indian chai ambience for focus, work, reading and slow moments.
         </p>
       </div>
     </div>
