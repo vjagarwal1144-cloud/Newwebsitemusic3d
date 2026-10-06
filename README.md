@@ -23,10 +23,15 @@ Chai With Music is a calm web listening experience built around lo-fi music, stu
 - Chai ambience: https://chaiwithmusic.vercel.app/chai-ambience/
 - Free resources: https://chaiwithmusic.vercel.app/resources/
 - Guides: https://chaiwithmusic.vercel.app/guides/
+- Launch & press kit: https://chaiwithmusic.vercel.app/launch/
+- Promotion & publisher page: https://chaiwithmusic.vercel.app/promote/
 
-## Sharing
+## Promotion and sharing
 
-If you find the listening room useful, share the most relevant page with a study group, library resource list, coding community, newsletter, blog or creator audience. Please avoid automated or paid link schemes.
+The official promotion page contains a short description, category suggestions, the best topic-specific URLs and guidance for publishers and communities:
+https://chaiwithmusic.vercel.app/promote/
+
+When sharing Chai With Music, link to the page that best matches the audience (for example, Study Music for students or Focus Music for developers) rather than repeatedly posting only the homepage. Avoid automated, paid or bulk backlink schemes.
 
 ## Development
 
