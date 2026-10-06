@@ -8,6 +8,7 @@ import {
   Timer,
   Download,
   ShieldCheck,
+  Share2,
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -18,6 +19,7 @@ interface TopBarProps {
   onOpenMixer: () => void;
   onOpenTimer: () => void;
   onOpenMenu: () => void;
+  onOpenShare: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -28,19 +30,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   onOpenMixer,
   onOpenTimer,
   onOpenMenu,
+  onOpenShare,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [onlineCount, setOnlineCount] = useState(() => 142 + Math.floor(Math.random() * 38));
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOnlineCount((prev) => {
-        const delta = Math.floor(Math.random() * 5) - 2;
-        return Math.max(90, Math.min(220, prev + delta));
-      });
-    }, 16000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const handleFsChange = () => {
@@ -67,18 +59,18 @@ export const TopBar: React.FC<TopBarProps> = ({
         <ClockWidget />
       </div>
 
-      {/* Zone 2: Worldwide Live Chai Drinkers Counter */}
+      {/* Zone 2: Real sharing / discovery */}
       <div className="hidden lg:flex items-center gap-2.5">
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/10 text-xs text-[#f5e9dc]/80 backdrop-blur-md">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f2b877] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#f2b877]" />
-          </span>
-          <span className="font-mono tabular-nums font-semibold text-[#f2b877]">
-            ~{onlineCount}
-          </span>
-          <span className="text-[#f5e9dc]/60">chai lovers sipping together</span>
-        </div>
+        <button
+          type="button"
+          onClick={onOpenShare}
+          aria-label="Share Chai Wala with friends"
+          title="Share Chai Wala"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs text-[#f5e9dc]/80 hover:bg-white/10 hover:border-[#f2b877]/40 transition-all backdrop-blur-md"
+        >
+          <Share2 className="w-3.5 h-3.5 text-[#f2b877]" />
+          <span>Share the chai</span>
+        </button>
 
         {/* Ad-Free Protection Badge */}
         <button
@@ -142,6 +134,16 @@ export const TopBar: React.FC<TopBarProps> = ({
           {isPouring && (
             <span className="absolute inset-0 rounded-full border border-[#e8934a] animate-ping opacity-40 pointer-events-none" />
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenShare}
+          aria-label="Share Chai Wala"
+          title="Share Chai Wala"
+          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.16] border border-[#ffecd6]/15 hover:border-white/40 text-[#f5e9dc] transition-all"
+        >
+          <Share2 className="w-4 h-4 text-[#f2b877]" />
         </button>
 
         {/* Ambient Soundscape Mixer */}
