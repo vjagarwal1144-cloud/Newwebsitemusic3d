@@ -10,7 +10,6 @@ import {
   ListMusic,
   Radio,
   ExternalLink,
-  ShieldCheck,
 } from 'lucide-react';
 import { CurrentTrack } from '../hooks/useYouTubePlayer';
 
@@ -33,7 +32,6 @@ interface NowPlayingProps {
   onToggleQueue: () => void;
   onOpenPlaylistSwitcher: () => void;
   playlistId: string;
-  isAdFreeMode: boolean;
 }
 
 const formatTime = (secs: number) => {
@@ -62,7 +60,6 @@ export const NowPlaying: React.FC<NowPlayingProps> = ({
   onToggleQueue,
   onOpenPlaylistSwitcher,
   playlistId,
-  isAdFreeMode,
 }) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
