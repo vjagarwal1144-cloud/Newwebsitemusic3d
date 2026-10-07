@@ -10,29 +10,31 @@ import { SoundMixerModal } from './components/SoundMixerModal';
 import { ChaiTimerModal } from './components/ChaiTimerModal';
 import { ChaiMenuModal } from './components/ChaiMenuModal';
 import { ShareModal } from './components/ShareModal';
+import { ChaiSessionPanel, SessionPreset } from './components/ChaiSessionPanel';
 import { initAnalytics, trackEvent } from './utils/analytics';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { audioEngine, AmbientMixerState } from './utils/audioEngine';
 
 export function App() {
-  const [currentScene, setCurrentScene] = useState<SceneMode>('dusk');
+  const [currentScene, setCurrentScene] = useState<SceneMode>(() => {
+    try { return (localStorage.getItem('chai-scene') as SceneMode) || 'dusk'; } catch { return 'dusk'; }
+  });
   const [isPouring, setIsPouring] = useState(false);
   const [burstTrigger, setBurstTrigger] = useState(0);
-
-  // Modals & Panels
   const [isMixerOpen, setIsMixerOpen] = useState(false);
   const [isTimerOpen, setIsTimerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
   const [isPlaylistSwitcherOpen, setIsPlaylistSwitcherOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
-
-  // Ambient sound mixer state
+  const [isSessionOpen, setIsSessionOpen] = useState(false);
   const [mixerState, setMixerState] = useState<AmbientMixerState>(() => audioEngine.getMixerState());
   const [isAmbientActive, setIsAmbientActive] = useState(false);
-
-  // YouTube Music Player hook with guaranteed first-time loading & ad-free stream
   const yt = useYouTubePlayer('PLSW-rtFaY_80');
+
+  useEffect(() => {
+    try { localStorage.setItem('chai-scene', currentScene); } catch {}
+  }, [currentScene]);
 
   useEffect(() => {
     initAnalytics();
@@ -41,24 +43,17 @@ export function App() {
     trackEvent('page_view_custom', { ref: ref || 'direct' });
   }, []);
 
-  // Trigger Traditional Cutting Chai Pour
   const handlePour = useCallback(() => {
     if (isPouring) return;
     setIsPouring(true);
-    setBurstTrigger((prev) => prev + 1);
-
-    // Auto-start ambient soundscape on first pour if not already active
+    setBurstTrigger(v => v + 1);
     if (!isAmbientActive) {
       audioEngine.startAmbientSoundscape();
       setIsAmbientActive(true);
     }
-
-    audioEngine.playChaiPour(() => {
-      setIsPouring(false);
-    });
+    audioEngine.playChaiPour(() => setIsPouring(false));
   }, [isPouring, isAmbientActive]);
 
-  // Ambient Mixer Updates
   const handleChangeMixer = (updated: Partial<AmbientMixerState>) => {
     audioEngine.setMixerLevels(updated);
     setMixerState(audioEngine.getMixerState());
@@ -74,49 +69,36 @@ export function App() {
     }
   };
 
-  // Keyboard Shortcuts
+  const handleStartSession = useCallback((preset: SessionPreset) => {
+    audioEngine.setMixerLevels(preset.mixer);
+    setMixerState(audioEngine.getMixerState());
+    if (!isAmbientActive) {
+      audioEngine.startAmbientSoundscape();
+      setIsAmbientActive(true);
+    }
+    if (!yt.isPlaying) yt.play();
+    trackEvent('chai_session_started', { preset: preset.id, minutes: preset.minutes });
+    setIsSessionOpen(false);
+  }, [isAmbientActive, yt]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
-        return;
-      }
-
-      if (e.code === 'Space') {
-        e.preventDefault();
-        yt.togglePlay();
-      } else if (e.code === 'KeyP' || e.code === 'KeyC') {
-        e.preventDefault();
-        handlePour();
-      } else if (e.code === 'KeyM') {
-        e.preventDefault();
-        yt.toggleMute();
-      } else if (e.code === 'ArrowRight') {
-        e.preventDefault();
-        yt.next();
-      } else if (e.code === 'ArrowLeft') {
-        e.preventDefault();
-        yt.previous();
-      }
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+      if (e.code === 'Space') { e.preventDefault(); yt.togglePlay(); }
+      else if (e.code === 'KeyF') { e.preventDefault(); setIsSessionOpen(true); }
+      else if (e.code === 'KeyP' || e.code === 'KeyC') { e.preventDefault(); handlePour(); }
+      else if (e.code === 'KeyM') { e.preventDefault(); yt.toggleMute(); }
+      else if (e.code === 'ArrowRight') { e.preventDefault(); yt.next(); }
+      else if (e.code === 'ArrowLeft') { e.preventDefault(); yt.previous(); }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [yt, handlePour]);
 
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden select-none bg-[#0b0705]">
-      {/* Hidden YouTube IFrame Container */}
-      <div
-        id={yt.containerId}
-        className="fixed top-0 -left-[9999px] w-[2px] h-[2px] pointer-events-none opacity-0"
-      />
-
-      {/* Atmospheric Visual Backdrop Shell with Authentic Chai Tapri Photo & Scene Mode */}
-      <ExperienceShell
-        currentScene={currentScene}
-        onSceneChange={setCurrentScene}
-      >
-        {/* Top Navigation Bar with World Clock, "चाय की भाप" Button & Controls */}
+      <div id={yt.containerId} className="fixed top-0 -left-[9999px] w-[2px] h-[2px] pointer-events-none opacity-0" />
+      <ExperienceShell currentScene={currentScene} onSceneChange={setCurrentScene}>
         <TopBar
           isPouring={isPouring}
           onPour={handlePour}
@@ -125,18 +107,9 @@ export function App() {
           onOpenMixer={() => setIsMixerOpen(true)}
           onOpenTimer={() => setIsTimerOpen(true)}
           onOpenMenu={() => setIsMenuOpen(true)}
-          onOpenShare={() => {
-            setIsShareOpen(true);
-            trackEvent('share_opened');
-          }}
+          onOpenShare={() => { setIsShareOpen(true); trackEvent('share_opened'); }}
         />
-
-        {/* Center Hero Title */}
-        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none px-4">
-          <HeroTitle />
-        </div>
-
-        {/* Bottom Music Player Bar */}
+        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none px-4"><HeroTitle /></div>
         <NowPlaying
           isPlaying={yt.isPlaying}
           onTogglePlay={yt.togglePlay}
@@ -153,66 +126,21 @@ export function App() {
           onToggleMute={yt.toggleMute}
           currentTrack={yt.currentTrack}
           isQueueOpen={isQueueOpen}
-          onToggleQueue={() => setIsQueueOpen(!isQueueOpen)}
+          onToggleQueue={() => setIsQueueOpen(v => !v)}
           onOpenPlaylistSwitcher={() => setIsPlaylistSwitcherOpen(true)}
           playlistId={yt.playlistId}
           isAdFreeMode={yt.isAdFreeMode}
         />
       </ExperienceShell>
 
-      {/* Interactive Hot Chai Steam Particle Canvas */}
-      <SteamCanvas
-        burstTrigger={burstTrigger}
-        originX={0.5}
-        originY={0.65}
-      />
-
-      {/* Playlist Track Queue Drawer */}
-      <QueuePanel
-        isOpen={isQueueOpen}
-        onClose={() => setIsQueueOpen(false)}
-        tracks={yt.playlistTracks}
-        currentIndex={yt.playlistIndex}
-        onSelectTrack={(idx) => {
-          yt.playIndex(idx);
-          setIsQueueOpen(false);
-        }}
-        playlistTitle="Old Delhi Tapri Queue"
-      />
-
-      {/* Playlist & Station Switcher Modal */}
-      <PlaylistSwitcher
-        isOpen={isPlaylistSwitcherOpen}
-        onClose={() => setIsPlaylistSwitcherOpen(false)}
-        activePlaylistId={yt.playlistId}
-        onSelectPlaylist={(id) => yt.switchPlaylist(id)}
-        isAdFreeMode={yt.isAdFreeMode}
-        onToggleAdFreeMode={yt.toggleAdFreeMode}
-      />
-
-      {/* Ambient Soundscape Mixer Modal */}
-      <SoundMixerModal
-        isOpen={isMixerOpen}
-        onClose={() => setIsMixerOpen(false)}
-        mixer={mixerState}
-        onChangeMixer={handleChangeMixer}
-        isAmbientActive={isAmbientActive}
-        onToggleAmbient={handleToggleAmbient}
-      />
-
-      {/* Focus & Mindfulness Stillness Timer Modal */}
-      <ChaiTimerModal
-        isOpen={isTimerOpen}
-        onClose={() => setIsTimerOpen(false)}
-      />
-
+      <SteamCanvas burstTrigger={burstTrigger} originX={0.5} originY={0.65} />
+      <QueuePanel isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} tracks={yt.playlistTracks} currentIndex={yt.playlistIndex} onSelectTrack={idx => { yt.playIndex(idx); setIsQueueOpen(false); }} playlistTitle="Old Delhi Tapri Queue" />
+      <PlaylistSwitcher isOpen={isPlaylistSwitcherOpen} onClose={() => setIsPlaylistSwitcherOpen(false)} activePlaylistId={yt.playlistId} onSelectPlaylist={yt.switchPlaylist} isAdFreeMode={yt.isAdFreeMode} onToggleAdFreeMode={yt.toggleAdFreeMode} />
+      <SoundMixerModal isOpen={isMixerOpen} onClose={() => setIsMixerOpen(false)} mixer={mixerState} onChangeMixer={handleChangeMixer} isAmbientActive={isAmbientActive} onToggleAmbient={handleToggleAmbient} />
+      <ChaiTimerModal isOpen={isTimerOpen} onClose={() => setIsTimerOpen(false)} />
       <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
-
-      {/* World Comfort Drinks & Chai Brewing Recipes Modal */}
-      <ChaiMenuModal
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-      />
+      <ChaiSessionPanel isOpen={isSessionOpen} onClose={() => setIsSessionOpen(false)} onStartSession={handleStartSession} />
+      <ChaiMenuModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </div>
   );
 }
