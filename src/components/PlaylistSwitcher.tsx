@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Radio, ArrowRight, Sparkles, ShieldCheck, Check } from 'lucide-react';
+import { X, Radio, ArrowRight, Sparkles, Check } from 'lucide-react';
 import { parseYouTubePlaylistId } from '../hooks/useYouTubePlayer';
 
 interface PlaylistSwitcherProps {
@@ -7,8 +7,6 @@ interface PlaylistSwitcherProps {
   onClose: () => void;
   activePlaylistId: string;
   onSelectPlaylist: (playlistId: string) => void;
-  isAdFreeMode: boolean;
-  onToggleAdFreeMode: () => void;
 }
 
 const CHAI_STATIONS = [
@@ -54,8 +52,6 @@ export const PlaylistSwitcher: React.FC<PlaylistSwitcherProps> = ({
   onClose,
   activePlaylistId,
   onSelectPlaylist,
-  isAdFreeMode,
-  onToggleAdFreeMode,
 }) => {
   const [customInput, setCustomInput] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -112,33 +108,6 @@ export const PlaylistSwitcher: React.FC<PlaylistSwitcherProps> = ({
           </button>
         </div>
 
-        {/* 100% Ad-Free Stream Mode Switch */}
-        <div className="flex items-center justify-between p-3 rounded-2xl bg-emerald-500/10 border border-emerald-400/25">
-          <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-white">
-                100% Ad-Free Audio Stream
-              </span>
-              <span className="text-[10px] text-emerald-300/80">
-                Guaranteed zero commercial ads during study or chill
-              </span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={onToggleAdFreeMode}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              isAdFreeMode
-                ? 'bg-emerald-400 text-black shadow-md'
-                : 'bg-white/10 text-white hover:bg-white/15'
-            }`}
-          >
-            {isAdFreeMode ? 'Enabled' : 'Enable Ad-Free'}
-          </button>
-        </div>
-
         {/* Preset Stations */}
         <div className="flex flex-col gap-2">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-white/70">
@@ -147,7 +116,7 @@ export const PlaylistSwitcher: React.FC<PlaylistSwitcherProps> = ({
 
           <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
             {CHAI_STATIONS.map((preset) => {
-              const isActive = !isAdFreeMode && activePlaylistId === preset.id;
+              const isActive = activePlaylistId === preset.id;
               return (
                 <button
                   key={preset.id}
