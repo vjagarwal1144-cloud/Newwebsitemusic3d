@@ -1,39 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { ClockWidget } from './ClockWidget';
 import {
-  Sliders,
-  Coffee,
-  Maximize2,
-  Minimize2,
-  Timer,
-  Download,
-  ShieldCheck,
-  Share2,
-  Sparkles,
+  Sliders, Coffee, Maximize2, Minimize2, Timer, Download, Share2, Sparkles, Waves,
 } from 'lucide-react';
 
 interface TopBarProps {
   isPouring: boolean;
   onPour: () => void;
-  isAdFreeMode: boolean;
-  onToggleAdFreeMode: () => void;
   onOpenMixer: () => void;
   onOpenTimer: () => void;
   onOpenSession: () => void;
   onOpenMenu: () => void;
   onOpenShare: () => void;
+  animationIntensity: 'full' | 'calm' | 'off';
+  onCycleMotion: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
   isPouring,
   onPour,
-  isAdFreeMode,
-  onToggleAdFreeMode,
   onOpenMixer,
   onOpenTimer,
   onOpenSession,
   onOpenMenu,
   onOpenShare,
+  animationIntensity,
+  onCycleMotion,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -75,20 +67,8 @@ export const TopBar: React.FC<TopBarProps> = ({
           <span>Share the chai</span>
         </button>
 
-        {/* Ad-Free Protection Badge */}
-        <button
-          type="button"
-          onClick={onToggleAdFreeMode}
-          title="Toggle 100% Ad-Free Audio Stream Mode (No YouTube ads guaranteed)"
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all border ${
-            isAdFreeMode
-              ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.35)]'
-              : 'bg-white/[0.06] hover:bg-white/10 border-white/10 text-[#f5e9dc]/70 hover:text-white'
-          }`}
-        >
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>{isAdFreeMode ? '⚡ Zero-Ad Stream Active' : 'Ad Shield Active'}</span>
-        </button>
+        <div className="hidden lg:flex items-center gap-2">
+        <span className="text-[10px] text-white/35 uppercase tracking-wider">Your Music · Your Space</span>
       </div>
 
       {/* Zone 3: Interactive Affordances */}
@@ -147,6 +127,12 @@ export const TopBar: React.FC<TopBarProps> = ({
           className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.16] border border-[#ffecd6]/15 hover:border-white/40 text-[#f5e9dc] transition-all"
         >
           <Share2 className="w-4 h-4 text-[#f2b877]" />
+        </button>
+
+        {/* Motion intensity */}
+        <button type="button" onClick={onCycleMotion} aria-label="Change animation intensity" title="Animation: Full, Calm or Off" className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.16] border border-[#ffecd6]/15 text-[#f5e9dc] transition-all">
+          <Waves className="w-4 h-4 text-[#f2b877]" />
+          <span className="sr-only">Motion {animationIntensity}</span>
         </button>
 
         {/* Ambient Soundscape Mixer */}
