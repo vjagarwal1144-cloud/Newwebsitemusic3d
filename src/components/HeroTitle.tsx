@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coffee, Waves, Trees, Sparkles, Moon, Mountain, CloudRain, Zap } from 'lucide-react';
+import { Coffee, Waves, Trees, Sparkles, Moon, Mountain, CloudRain, Zap, CarFront, Orbit, BookOpen, TrainFront } from 'lucide-react';
 import type { SceneMode } from './ExperienceShell';
 
 const COPY: Record<SceneMode, { icon: React.ReactNode; badge: string; title: string; sub: string; line: string }> = {
@@ -11,6 +11,10 @@ const COPY: Record<SceneMode, { icon: React.ReactNode; badge: string; title: str
   forest: { icon:<Trees className="w-3 h-3"/>, badge:'Forest · Nature · Focus', title:'Forest With Music', sub:'Green. Quiet. Focused.', line:'A calm forest room for concentration, study and uninterrupted work.' },
   aurora: { icon:<Sparkles className="w-3 h-3"/>, badge:'Aurora · Ambient · Creative', title:'Aurora With Music', sub:'Light. Flow. Create.', line:'Moving northern lights and ambient music for creative flow.' },
   neon: { icon:<Zap className="w-3 h-3"/>, badge:'Neon · Electronic · Energy', title:'Neon With Music', sub:'Glow. Pulse. Move.', line:'A cinematic night room for upbeat playlists, coding and momentum.' },
+  drive: { icon:<CarFront className="w-3 h-3"/>, badge:'Night Drive · Road · Music', title:'Drive With Music', sub:'Road. Lights. Rhythm.', line:'A moving night highway atmosphere for long drives and late-night playlists.' },
+  space: { icon:<Orbit className="w-3 h-3"/>, badge:'Space · Ambient · Dream', title:'Space With Music', sub:'Drift. Orbit. Listen.', line:'A weightless cosmic room for ambient music, imagination and deep listening.' },
+  study: { icon:<BookOpen className="w-3 h-3"/>, badge:'Study · Focus · Deep Work', title:'Study With Music', sub:'Desk. Focus. Flow.', line:'A warm digital study room for reading, coding and uninterrupted concentration.' },
+  train: { icon:<TrainFront className="w-3 h-3"/>, badge:'Journey · Travel · Lo-fi', title:'Journey With Music', sub:'Window. Miles. Music.', line:'A cinematic train-window journey where landscapes drift while your playlist plays.' },
 };
 
 interface HeroTitleProps { scene?: SceneMode; isPlaying?: boolean; }
