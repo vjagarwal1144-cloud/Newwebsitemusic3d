@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type SceneMode = 'dusk' | 'monsoon' | 'midnight' | 'pahadi';
+export type SceneMode = 'dusk' | 'monsoon' | 'midnight' | 'pahadi' | 'ocean' | 'forest' | 'aurora' | 'neon';
 
 export interface SceneConfig {
   id: SceneMode;
@@ -56,15 +56,51 @@ export const SCENES: Record<SceneMode, SceneConfig> = {
   },
 };
 
+  ocean: {
+    id: 'ocean', name: 'Ocean Drift', hindiName: 'समंदर की शांति',
+    tagline: 'Slow waves, soft light and deep listening',
+    skyGradient: 'linear-gradient(180deg, #06141c 0%, #0a2632 35%, #0b4a58 65%, #03161c 100%)',
+    sunColor: 'radial-gradient(circle, rgba(102, 226, 220, 0.45) 0%, rgba(40, 170, 190, 0.18) 45%, transparent 75%)',
+    sunPosition: { bottom: '30%', left: '62%', size: 'min(40vw, 460px)' },
+    scrimStyle: 'linear-gradient(180deg, rgba(2,12,18,.45), rgba(2,12,18,.1) 45%, rgba(2,12,18,.88))',
+  },
+  forest: {
+    id: 'forest', name: 'Forest Focus', hindiName: 'जंगल की शांति',
+    tagline: 'Deep green stillness for reading and concentration',
+    skyGradient: 'linear-gradient(180deg, #07120d 0%, #0d2b1b 38%, #17452a 68%, #040b08 100%)',
+    sunColor: 'radial-gradient(circle, rgba(157, 210, 139, 0.4) 0%, rgba(80, 150, 95, .16) 45%, transparent 75%)',
+    sunPosition: { bottom: '35%', left: '25%', size: 'min(36vw, 420px)' },
+    scrimStyle: 'linear-gradient(180deg, rgba(3,12,7,.5), rgba(3,12,7,.08) 45%, rgba(3,12,7,.9))',
+  },
+  aurora: {
+    id: 'aurora', name: 'Aurora Dream', hindiName: 'ऑरोरा',
+    tagline: 'Moving light for creative flow and late-night listening',
+    skyGradient: 'linear-gradient(135deg, #080617 0%, #14234a 40%, #173f45 67%, #070914 100%)',
+    sunColor: 'radial-gradient(circle, rgba(91, 227, 196, .35) 0%, rgba(111, 111, 255, .2) 42%, transparent 75%)',
+    sunPosition: { bottom: '40%', left: '50%', size: 'min(48vw, 520px)' },
+    scrimStyle: 'linear-gradient(180deg, rgba(4,5,18,.35), rgba(4,5,18,.12) 45%, rgba(4,5,18,.88))',
+  },
+  neon: {
+    id: 'neon', name: 'Neon Night', hindiName: 'नियॉन नाइट',
+    tagline: 'A cinematic night mode for electronic and upbeat playlists',
+    skyGradient: 'linear-gradient(135deg, #090414 0%, #24103d 45%, #35122d 70%, #07030b 100%)',
+    sunColor: 'radial-gradient(circle, rgba(236, 92, 190, .42) 0%, rgba(88, 94, 255, .2) 48%, transparent 75%)',
+    sunPosition: { bottom: '25%', left: '70%', size: 'min(38vw, 430px)' },
+    scrimStyle: 'linear-gradient(180deg, rgba(6,3,13,.5), rgba(6,3,13,.12) 42%, rgba(6,3,13,.92))',
+  },
+};
+
 interface ExperienceShellProps {
   currentScene: SceneMode;
   onSceneChange: (scene: SceneMode) => void;
   children?: React.ReactNode;
+  isPlaying?: boolean;
 }
 
 export const ExperienceShell: React.FC<ExperienceShellProps> = ({
   currentScene,
   children,
+  isPlaying = false,
 }) => {
   const scene = SCENES[currentScene] || SCENES.dusk;
 
@@ -106,6 +142,17 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
         </div>
       )}
 
+      {/* Living atmosphere: slow parallax light ribbons react visually to music playback */}
+      <div className={`absolute inset-[-15%] pointer-events-none z-[2] transition-opacity duration-700 ${isPlaying ? 'opacity-70 animate-[atmosphere-drift_18s_ease-in-out_infinite]' : 'opacity-30'}`}>
+        <div className="absolute w-[55vw] h-[20vw] rounded-full bg-white/[0.035] blur-3xl -rotate-12 left-[8%] top-[24%]" />
+        <div className="absolute w-[45vw] h-[18vw] rounded-full bg-white/[0.025] blur-3xl rotate-12 right-[2%] top-[48%]" />
+      </div>
+
+      {/* Song-playing visualizer field */}
+      <div className={`absolute inset-x-0 bottom-[14%] h-28 pointer-events-none z-[4] flex items-end justify-center gap-[3px] transition-opacity duration-500 ${isPlaying ? 'opacity-45' : 'opacity-0'}`} aria-hidden="true">
+        {Array.from({ length: 48 }, (_, i) => <span key={i} className="w-[2px] rounded-full bg-white/70 animate-[music-pulse_1.1s_ease-in-out_infinite]" style={{ height: `${10 + ((i * 17) % 42)}px`, animationDelay: `${(i % 9) * -0.12}s` }} />)}
+      </div>
+
       {/* Scrim Overlay */}
       <div
         className="absolute inset-0 pointer-events-none transition-all duration-1000 ease-out"
@@ -115,6 +162,13 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
       {/* Ground Silhouette & Deep Vignette */}
       <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-[#0b0705] via-[#0b0705]/80 to-transparent z-[3]" />
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(11,7,5,0.75)_100%)] z-[3]" />
+
+      {/* Theme selector — Chai is optional, not the identity of the whole experience */}
+      <div className="absolute z-20 top-16 left-3 sm:left-6 flex gap-1.5 overflow-x-auto max-w-[calc(100vw-24px)] pb-1 pointer-events-auto">
+        {(Object.values(SCENES) as SceneConfig[]).map(s => (
+          <button key={s.id} type="button" title={s.tagline} onClick={() => onSceneChange(s.id)} className={`shrink-0 px-2.5 py-1.5 rounded-full text-[9px] uppercase tracking-wider border backdrop-blur-xl transition-all ${currentScene === s.id ? 'bg-white/15 border-white/30 text-white scale-105' : 'bg-black/20 border-white/10 text-white/55 hover:text-white hover:bg-white/10'}`}>{s.name}</button>
+        ))}
+      </div>
 
       {/* Shell Content */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between">
