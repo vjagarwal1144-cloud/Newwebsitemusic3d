@@ -98,7 +98,7 @@ export function App() {
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden select-none bg-[#0b0705]">
       <div id={yt.containerId} className="fixed top-0 -left-[9999px] w-[2px] h-[2px] pointer-events-none opacity-0" />
-      <ExperienceShell currentScene={currentScene} onSceneChange={setCurrentScene}>
+      <ExperienceShell currentScene={currentScene} onSceneChange={setCurrentScene} isPlaying={yt.isPlaying}>
         <TopBar
           isPouring={isPouring}
           onPour={handlePour}
