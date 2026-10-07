@@ -98,7 +98,7 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
         bottom: scene.sunPosition.bottom, left: scene.sunPosition.left,
         background: scene.sunColor, filter: 'blur(45px)', opacity: isPlaying ? .95 : .72,
       }} />
-      <div className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-out opacity-85" style={{
+      <div className={"absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-out " + ((currentScene === "dusk" || currentScene === "monsoon" || currentScene === "midnight" || currentScene === "pahadi") ? "opacity-85" : "opacity-0")} style={{
         backgroundImage: 'url(' + import.meta.env.BASE_URL + 'background/chaiwala.jpg)', mixBlendMode: 'screen',
       }} />
 
