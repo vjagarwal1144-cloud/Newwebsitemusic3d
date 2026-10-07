@@ -116,7 +116,7 @@ export function App() {
 
       <SteamCanvas burstTrigger={burstTrigger} originX={0.5} originY={0.65} />
       <QueuePanel isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} tracks={yt.playlistTracks} currentIndex={yt.playlistIndex} onSelectTrack={idx => { yt.playIndex(idx); setIsQueueOpen(false); }} playlistTitle="Music Queue" />
-      <PlaylistSwitcher isOpen={isPlaylistSwitcherOpen} onClose={() => setIsPlaylistSwitcherOpen(false)} activePlaylistId={yt.playlistId} onSelectPlaylist={yt.switchPlaylist} isAdFreeMode={yt.isAdFreeMode} onToggleAdFreeMode={yt.toggleAdFreeMode} />
+      <PlaylistSwitcher isOpen={isPlaylistSwitcherOpen} onClose={() => setIsPlaylistSwitcherOpen(false)} activePlaylistId={yt.playlistId} onSelectPlaylist={yt.switchPlaylist} />
       <SoundMixerModal isOpen={isMixerOpen} onClose={() => setIsMixerOpen(false)} mixer={mixerState} onChangeMixer={handleChangeMixer} isAmbientActive={isAmbientActive} onToggleAmbient={handleToggleAmbient} />
       <ChaiTimerModal isOpen={isTimerOpen} onClose={() => setIsTimerOpen(false)} />
       <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
