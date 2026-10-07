@@ -240,3 +240,66 @@ input[type="range"].custom-slider::-webkit-slider-thumb:hover {
 .hero-playing { animation: hero-float 6s ease-in-out infinite; }
 @keyframes hero-float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-4px) scale(1.012)} }
 @media (prefers-reduced-motion: reduce) { .hero-playing { animation:none !important; } }
+
+
+/* === Multi-world cinematic backgrounds === */
+.world-background { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+.world-background > div { position:absolute; pointer-events:none; }
+.world-sky { inset:0; }
+.world-mountains::before,.world-mountains::after { content:""; position:absolute; bottom:12%; width:70vw; height:42vh; background:linear-gradient(145deg,transparent 48%,rgba(255,255,255,.13) 49%,rgba(25,35,48,.95) 50%,transparent 51%); filter:blur(.3px); }
+.world-mountains::before { left:-8%; transform:scale(1.35); }
+.world-mountains::after { right:-20%; transform:scale(1.1) rotate(2deg); opacity:.65; }
+.world-clouds { inset:0; opacity:.45; }
+.world-clouds::before,.world-clouds::after { content:""; position:absolute; width:38vw;height:9vw;border-radius:999px;background:rgba(220,235,255,.08);filter:blur(22px);top:24%;left:-40%;animation:cloud-drift 32s linear infinite; }
+.world-clouds::after { top:38%;left:30%;width:28vw;animation-delay:-15s;opacity:.55; }
+.world-road { left:-10%;right:-10%;bottom:-5%;height:43%;background:linear-gradient(170deg,transparent 0 35%,rgba(18,22,31,.92) 36%,#06080d 100%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%); }
+.world-road::before { content:"";position:absolute;left:50%;top:0;width:5px;height:120%;background:repeating-linear-gradient(to bottom,rgba(255,255,220,.85) 0 70px,transparent 70px 130px);filter:drop-shadow(0 0 10px rgba(255,220,150,.45));animation:road-move 1.2s linear infinite; }
+@keyframes road-move { to { transform:translateY(130px); } }
+.world-road-lights { inset:0; opacity:0; }
+.world-road-lights::before,.world-road-lights::after { content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:#fff4c2;box-shadow:0 0 18px 6px rgba(255,220,140,.5);bottom:30%;animation:headlights 2.4s linear infinite; }
+.world-road-lights::before { left:30%; }.world-road-lights::after { right:30%;animation-delay:-1.2s; }
+@keyframes headlights { 0%{transform:translateY(25vh) scale(.4);opacity:0}35%,70%{opacity:.9}100%{transform:translateY(-30vh) scale(1.8);opacity:0} }
+.world-stars { inset:0; opacity:0; background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1.5px);background-size:73px 67px;animation:star-pan 22s linear infinite; }
+@keyframes star-pan { to { background-position:73px 67px; } }
+.world-window { inset:5% 3% 12%; opacity:0; border:1px solid rgba(255,255,255,.08);border-radius:28px;box-shadow:inset 0 0 80px rgba(0,0,0,.4); }
+.world-window::before { content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(255,255,255,.08); }
+.world-desk { left:5%;right:5%;bottom:10%;height:20%;opacity:0;background:linear-gradient(180deg,rgba(90,55,35,.3),rgba(20,11,8,.95));border-top:1px solid rgba(255,210,150,.18); }
+.world-desk::after { content:"";position:absolute;right:13%;top:-42%;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(255,190,100,.45),transparent 65%);filter:blur(14px);animation:lamp-breathe 4s ease-in-out infinite; }
+@keyframes lamp-breathe { 50%{transform:scale(1.15);opacity:.7} }
+.world-glow { inset:0;opacity:.2;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.1),transparent 45%);animation:world-breathe 7s ease-in-out infinite; }
+@keyframes world-breathe { 50%{transform:scale(1.04);opacity:.34} }
+
+/* Actual world compositions */
+.world-dusk .world-sky,.world-monsoon .world-sky,.world-midnight .world-sky,.world-pahadi .world-sky,.world-ocean .world-sky,.world-forest .world-sky,.world-aurora .world-sky,.world-neon .world-sky,.world-drive .world-sky,.world-space .world-sky,.world-study .world-sky,.world-train .world-sky { inset:0; }
+.world-pahadi .world-mountains,.world-drive .world-road,.world-drive .world-road-lights,.world-space .world-stars,.world-study .world-desk,.world-train .world-window { opacity:1; }
+.world-pahadi .world-mountains { filter:blur(.2px); }
+.world-drive .world-road { animation:road-breathe 6s ease-in-out infinite; }
+.world-drive .world-glow { background:radial-gradient(ellipse at 50% 60%,rgba(90,140,255,.12),transparent 55%); }
+.world-space .world-stars { opacity:.9; }
+.world-space .world-glow { background:radial-gradient(circle at 62% 35%,rgba(150,110,255,.22),transparent 40%); }
+.world-study .world-glow { background:radial-gradient(circle at 78% 52%,rgba(255,180,90,.2),transparent 35%); }
+.world-train .world-window { background:linear-gradient(90deg,rgba(20,25,40,.3),transparent 12% 88%,rgba(20,25,40,.45)); animation:window-shift 12s ease-in-out infinite; }
+@keyframes window-shift { 50%{transform:scale(1.015) translateX(-1%)} }
+.world-ocean .world-sky { background:linear-gradient(180deg,transparent 48%,rgba(20,150,180,.12) 49%,rgba(3,35,44,.5) 75%,rgba(1,8,12,.9)); }
+.world-forest .world-mountains { opacity:.65; filter:hue-rotate(45deg) saturate(.6); }
+.world-neon .world-road { opacity:.7;filter:hue-rotate(210deg); }
+.world-neon .world-glow { background:radial-gradient(circle at 50% 45%,rgba(255,70,210,.18),rgba(70,90,255,.08) 35%,transparent 65%); }
+.world-monsoon .world-clouds,.world-midnight .world-clouds { opacity:.8; }
+.world-dusk .world-glow,.world-pahadi .world-glow { background:radial-gradient(circle at 28% 55%,rgba(255,155,75,.16),transparent 42%); }
+
+.world-selector { scrollbar-width:none; }
+.world-chip { background:rgba(5,7,12,.24); border-color:rgba(255,255,255,.10); box-shadow:0 8px 28px rgba(0,0,0,.14); }
+.world-chip-active { background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);box-shadow:0 0 28px rgba(255,255,255,.1),inset 0 1px rgba(255,255,255,.15); }
+.world-drive .world-selector .world-chip-active { border-radius:8px; }
+.world-space .world-selector .world-chip { border-radius:10px; }
+.world-study .world-selector .world-chip { border-radius:12px; }
+.world-train .world-selector .world-chip { border-radius:8px 18px 8px 18px; }
+
+@media (max-width:640px) {
+  .world-road { height:38%; }
+  .world-mountains::before,.world-mountains::after { width:110vw;height:34vh; }
+  .world-window { inset:8% 2% 14%;border-radius:20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-road::before,.world-road-lights::before,.world-road-lights::after,.world-stars,.world-desk::after,.world-glow,.world-train .world-window { animation:none !important; }
+}
