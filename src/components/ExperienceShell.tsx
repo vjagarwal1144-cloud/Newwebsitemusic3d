@@ -1,7 +1,7 @@
 import React from 'react';
 import { AmbientEffects } from './AmbientEffects';
 
-export type SceneMode = 'dusk' | 'monsoon' | 'midnight' | 'pahadi' | 'ocean' | 'forest' | 'aurora' | 'neon';
+export type SceneMode = 'dusk' | 'monsoon' | 'midnight' | 'pahadi' | 'ocean' | 'forest' | 'aurora' | 'neon' | 'drive' | 'space' | 'study' | 'train';
 
 export interface SceneConfig {
   id: SceneMode; name: string; hindiName: string; tagline: string;
@@ -75,6 +75,39 @@ export const SCENES: Record<SceneMode, SceneConfig> = {
     sunPosition: { bottom: '25%', left: '70%', size: 'min(38vw,430px)' },
     scrimStyle: 'linear-gradient(180deg,rgba(6,3,13,.5),rgba(6,3,13,.12) 42%,rgba(6,3,13,.92))',
   },
+
+  drive: {
+    id: 'drive', name: 'Night Drive', hindiName: 'रात की ड्राइव',
+    tagline: 'Open highway, dashboard glow and music after dark',
+    skyGradient: 'linear-gradient(180deg,#02040b 0%,#081226 38%,#151b2f 62%,#080b12 100%)',
+    sunColor: 'radial-gradient(circle,rgba(94,150,255,.35),rgba(60,90,190,.12) 45%,transparent 75%)',
+    sunPosition: { bottom: '42%', left: '70%', size: 'min(42vw,480px)' },
+    scrimStyle: 'linear-gradient(180deg,rgba(2,4,11,.38),rgba(2,4,11,.05) 42%,rgba(2,4,11,.88))',
+  },
+  space: {
+    id: 'space', name: 'Deep Space', hindiName: 'अंतरिक्ष',
+    tagline: 'Nebula light, distant stars and endless listening',
+    skyGradient: 'radial-gradient(circle at 55% 35%,#26345f 0%,#111630 32%,#050713 72%,#010207 100%)',
+    sunColor: 'radial-gradient(circle,rgba(150,120,255,.35),rgba(70,180,255,.12) 48%,transparent 78%)',
+    sunPosition: { bottom: '38%', left: '48%', size: 'min(50vw,560px)' },
+    scrimStyle: 'linear-gradient(180deg,rgba(1,2,8,.18),rgba(1,2,8,.05) 48%,rgba(1,2,8,.9))',
+  },
+  study: {
+    id: 'study', name: 'Study Room', hindiName: 'स्टडी रूम',
+    tagline: 'A quiet desk, warm lamp and deep-focus atmosphere',
+    skyGradient: 'linear-gradient(180deg,#18151a 0%,#302620 42%,#4a3425 70%,#100b09 100%)',
+    sunColor: 'radial-gradient(circle,rgba(255,197,112,.5),rgba(235,140,65,.12) 48%,transparent 75%)',
+    sunPosition: { bottom: '42%', left: '72%', size: 'min(40vw,460px)' },
+    scrimStyle: 'linear-gradient(180deg,rgba(16,11,10,.3),rgba(16,11,10,.05) 45%,rgba(16,11,10,.9))',
+  },
+  train: {
+    id: 'train', name: 'Train Journey', hindiName: 'सफ़र',
+    tagline: 'Window-side music with landscapes flowing past',
+    skyGradient: 'linear-gradient(180deg,#111b32 0%,#38516d 40%,#c47b55 66%,#15100e 100%)',
+    sunColor: 'radial-gradient(circle,rgba(255,205,140,.7),rgba(240,130,75,.18) 48%,transparent 75%)',
+    sunPosition: { bottom: '35%', left: '22%', size: 'min(38vw,430px)' },
+    scrimStyle: 'linear-gradient(180deg,rgba(8,12,24,.35),rgba(8,12,24,.08) 42%,rgba(8,12,24,.9))',
+  },
 };
 
 interface ExperienceShellProps {
@@ -98,9 +131,17 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
         bottom: scene.sunPosition.bottom, left: scene.sunPosition.left,
         background: scene.sunColor, filter: 'blur(45px)', opacity: isPlaying ? .95 : .72,
       }} />
-      <div className={"absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-out " + ((currentScene === "dusk" || currentScene === "monsoon" || currentScene === "midnight" || currentScene === "pahadi") ? "opacity-85" : "opacity-0")} style={{
-        backgroundImage: 'url(' + import.meta.env.BASE_URL + 'background/chaiwala.jpg)', mixBlendMode: 'screen',
-      }} />
+      <div className={"world-background world-" + currentScene} aria-hidden="true">
+        <div className="world-sky" />
+        <div className="world-mountains" />
+        <div className="world-clouds" />
+        <div className="world-road" />
+        <div className="world-road-lights" />
+        <div className="world-stars" />
+        <div className="world-window" />
+        <div className="world-desk" />
+        <div className="world-glow" />
+      </div>
 
       <AmbientEffects scene={currentScene} isPlaying={isPlaying} intensity={animationIntensity} />
 
@@ -120,12 +161,13 @@ export const ExperienceShell: React.FC<ExperienceShellProps> = ({
       <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-[#0b0705] via-[#0b0705]/80 to-transparent z-[5]" />
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(11,7,5,0.75)_100%)] z-[5]" />
 
-      <div className="absolute z-20 top-16 left-3 sm:left-6 right-3 flex gap-1.5 overflow-x-auto pb-1 pointer-events-auto no-scrollbar">
+      <div className="absolute z-20 top-16 left-3 sm:left-6 right-3 flex gap-2 overflow-x-auto pb-2 pointer-events-auto no-scrollbar world-selector">
         {(Object.values(SCENES) as SceneConfig[]).map(s => (
           <button key={s.id} type="button" title={s.tagline} onClick={() => onSceneChange(s.id)}
-            className={'shrink-0 px-2.5 py-1.5 rounded-full text-[9px] uppercase tracking-wider border backdrop-blur-xl transition-all ' +
-              (currentScene === s.id ? 'bg-white/15 border-white/30 text-white scale-105 shadow-[0_0_18px_rgba(255,255,255,.08)]' : 'bg-black/20 border-white/10 text-white/55 hover:text-white hover:bg-white/10')}>
-            {s.name}
+            className={'world-chip shrink-0 px-3 py-2 rounded-2xl text-[10px] font-medium tracking-wide border backdrop-blur-2xl transition-all ' +
+              (currentScene === s.id ? 'world-chip-active text-white scale-[1.04]' : 'text-white/65 hover:text-white')}>
+            <span className="block text-[13px]">{({dusk:'☕',monsoon:'🌧️',midnight:'🌙',pahadi:'🏔️',ocean:'🌊',forest:'🌲',aurora:'🌌',neon:'💜',drive:'🚗',space:'🪐',study:'📚',train:'🚆'} as Record<SceneMode,string>)[s.id]}</span>
+            <span>{s.name}</span>
           </button>
         ))}
       </div>
