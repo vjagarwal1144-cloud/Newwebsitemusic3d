@@ -9,6 +9,7 @@ import {
   Download,
   ShieldCheck,
   Share2,
+  Sparkles,
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -18,6 +19,7 @@ interface TopBarProps {
   onToggleAdFreeMode: () => void;
   onOpenMixer: () => void;
   onOpenTimer: () => void;
+  onOpenSession: () => void;
   onOpenMenu: () => void;
   onOpenShare: () => void;
 }
@@ -29,6 +31,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onToggleAdFreeMode,
   onOpenMixer,
   onOpenTimer,
+  onOpenSession,
   onOpenMenu,
   onOpenShare,
 }) => {
@@ -155,6 +158,17 @@ export const TopBar: React.FC<TopBarProps> = ({
           className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.16] border border-[#ffecd6]/15 hover:border-white/40 text-[#f5e9dc] transition-all"
         >
           <Sliders className="w-4 h-4 text-[#f2b877]" />
+        </button>
+
+        {/* Chai Focus Session */}
+        <button
+          type="button"
+          onClick={onOpenSession}
+          aria-label="Start a chai focus session"
+          title="Chai Focus Session"
+          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffecd6]/[0.08] hover:bg-[#ffecd6]/[0.16] border border-[#ffecd6]/15 hover:border-white/40 text-[#f5e9dc] transition-all"
+        >
+          <Sparkles className="w-4 h-4 text-[#f2b877]" />
         </button>
 
         {/* Stillness & Pomodoro Focus Timer */}
