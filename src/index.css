@@ -235,3 +235,8 @@ input[type="range"].custom-slider::-webkit-slider-thumb:hover {
 @media (prefers-reduced-motion: reduce) {
   .rain-field i,.ocean-waves span,.firefly-field b,.aurora-ribbons span,.neon-grid,.cloud-field span,.star-field i,.focus-aura-playing { animation:none !important; }
 }
+
+.hero-glow { background: radial-gradient(circle, rgba(242,184,119,.28) 0%, rgba(90,190,210,.08) 38%, transparent 72%); }
+.hero-playing { animation: hero-float 6s ease-in-out infinite; }
+@keyframes hero-float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-4px) scale(1.012)} }
+@media (prefers-reduced-motion: reduce) { .hero-playing { animation:none !important; } }
