@@ -104,7 +104,7 @@ export function App() {
           animationIntensity={animationIntensity}
           onCycleMotion={cycleMotion}
         />
-        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none px-4"><HeroTitle /></div>
+        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none px-4"><HeroTitle scene={currentScene} isPlaying={yt.isPlaying} /></div>
         <NowPlaying
           isPlaying={yt.isPlaying} onTogglePlay={yt.togglePlay} onNext={yt.next} onPrevious={yt.previous}
           isShuffled={yt.isShuffled} onToggleShuffle={yt.toggleShuffle} currentTime={yt.currentTime} duration={yt.duration}
