@@ -106,6 +106,7 @@ export function App() {
           onToggleAdFreeMode={yt.toggleAdFreeMode}
           onOpenMixer={() => setIsMixerOpen(true)}
           onOpenTimer={() => setIsTimerOpen(true)}
+          onOpenSession={() => setIsSessionOpen(true)}
           onOpenMenu={() => setIsMenuOpen(true)}
           onOpenShare={() => { setIsShareOpen(true); trackEvent('share_opened'); }}
         />
